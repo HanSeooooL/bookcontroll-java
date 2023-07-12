@@ -104,7 +104,6 @@ class utilityss {
     public void filesave(Book a, String direction) {
         try {
             OutputStream Output = new FileOutputStream(direction);
-            byte[] by =
         }
         catch (Exception e) {
             e.getStackTrace();
