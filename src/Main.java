@@ -13,7 +13,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        HashMap<String, Book> map = new HashMap<String, Book>();
+
+
+        titleUI title = new titleUI();
+
+        /*HashMap<String, Book> map = new HashMap<String, Book>();
 
         Book newone = new Book("어린왕자", "생텍쥐페리", "갈리마르");
         Book newtwo = new Book("화성학", "백병동", "HARMONY");
@@ -33,7 +37,7 @@ public class Main {
 
         for(String key : keys) {
             System.out.println(key);
-        }
+        }*/
 
         /*
         newone.rentthebook("한설", "20230606", "20230711");
