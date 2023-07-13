@@ -5,17 +5,40 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.Collection;
+
 public class Main {
 
     public static void main(String[] args) {
 
+        HashMap<String, Book> map = new HashMap<String, Book>();
+
         Book newone = new Book("어린왕자", "생텍쥐페리", "갈리마르");
-        Book.getV Bookvalue = newone.new getV();
+        Book newtwo = new Book("화성학", "백병동", "HARMONY");
+        Book newthree = new Book("어린왕자", "먀", "no");
         programinside utilitys = new programinside();
         programinside.getDays getday = utilitys.new getDays();
+        map.put(newone.getBookname(), newone);
+        map.put(newtwo.getBookname(), newtwo);
+        map.put(newthree.getBookname(), newthree);
+
+        Set<String> keys = map.keySet();
+        Collection<Book> values = map.values();
+
+        for(Book value : values) {
+            System.out.println(value.getWriter());
+        }
+
+        for(String key : keys) {
+            System.out.println(key);
+        }
+
+        /*
         newone.rentthebook("한설", "20230606", "20230711");
         System.out.println(getday.checkHowyouDidntReturn(Bookvalue.getReturnday()));
-
+        */
 
         /*Book a = new Book("어린왕자", "생텍쥐페리", "갈리마르");
         a.print_book();
@@ -28,6 +51,7 @@ public class Main {
 }
 
 class Book{
+    private String id;
     private String bookname;
     private String writer;
     private String company;
@@ -73,48 +97,47 @@ class Book{
 
     }
 
-    public class getV {
-        String getBookname() {
-            return bookname;
-        }
+    String getBookname() {
+        return this.bookname;
+    }
 
-        String getWriter() {
-            return writer;
-        }
+    String getWriter() {
+        return this.writer;
+    }
 
-        String getCompany() {
-            return company;
-        }
+    String getCompany() {
+        return this.company;
+    }
 
-        Boolean getdiditRent() {
-            return rent;
-        }
+    Boolean getdiditRent() {
+        return this.rent;
+    }
 
-        String getRentname() {
-            if(rent) {
-                return rentname;
-            }
-            else {
-                return "_";
-            }
+    String getRentname() {
+        if(this.rent) {
+            return this.rentname;
         }
-
-        String getRentday() {
-            if(rent) {
-                return rentday;
-            }
-            else {
-                return "________";
-            }
-        }
-
-        String getReturnday() {
-            if(rent) {
-                return willreturnday;
-            }
-            else return "________";
+        else {
+            return "_";
         }
     }
+
+    String getRentday() {
+        if(this.rent) {
+            return this.rentday;
+        }
+        else {
+            return "________";
+        }
+    }
+
+    String getReturnday() {
+        if(this.rent) {
+            return this.willreturnday;
+        }
+        else return "________";
+    }
+
 
     void filesave() {
         try {

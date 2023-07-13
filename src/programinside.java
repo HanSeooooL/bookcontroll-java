@@ -37,16 +37,16 @@ public class programinside {
             int res, year, month, day;
             long reslong, returndayslong, nowdayslong;
 
-            year = Integer.parseInt(returnday.substring(0, 4));
-            month = Integer.parseInt(returnday.substring(4, 6));
-            day = Integer.parseInt(returnday.substring(6, 8));
+            year = Integer.parseInt(returnday.substring(0, 4)); //String Int로 형변환
+            month = Integer.parseInt(returnday.substring(4, 6));    //String Int로 형변환
+            day = Integer.parseInt(returnday.substring(6, 8));  //String Int로 형변환
 
             returndayslong = changethecalendertoDays(year, month, day);
             nowdayslong = changethecalendertoDays(now.getYear(), now.getMonthValue(), now.getDayOfMonth());
 
             reslong = nowdayslong - returndayslong;
 
-            res = Long.valueOf(reslong).intValue();
+            res = Long.valueOf(reslong).intValue(); //Long to int
 
             return res;
         }
