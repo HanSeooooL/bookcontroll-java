@@ -6,14 +6,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
 public class Main {
+
     public static void main(String[] args) {
-        Book a = new Book("어린왕자", "생텍쥐페리", "갈리마르");
+
+        Book newone = new Book("어린왕자", "생텍쥐페리", "갈리마르");
+        Book.getV Bookvalue = newone.new getV();
+        programinside utilitys = new programinside();
+        programinside.getDays getday = utilitys.new getDays();
+        newone.rentthebook("한설", "20230606", "20230711");
+        System.out.println(getday.checkHowyouDidntReturn(Bookvalue.getReturnday()));
+
+
+        /*Book a = new Book("어린왕자", "생텍쥐페리", "갈리마르");
         a.print_book();
-        a.rentthebook("한설", "20230606", "20230712");
         a.print_book();
         a.returnthebook();
         a.print_book();
-        a.filesave();
+        a.filesave();*/
+
     }
 }
 
@@ -55,7 +65,7 @@ class Book{
         System.out.println(this.bookname);
         System.out.println(this.writer);
         System.out.println(this.company);
-        if(this.rent == true) {
+        if(this.rent) {
             System.out.println(this.rentname);
             System.out.println(this.rentday);
             System.out.println(this.willreturnday);
@@ -63,8 +73,47 @@ class Book{
 
     }
 
-    public void getValue() {
+    public class getV {
+        String getBookname() {
+            return bookname;
+        }
 
+        String getWriter() {
+            return writer;
+        }
+
+        String getCompany() {
+            return company;
+        }
+
+        Boolean getdiditRent() {
+            return rent;
+        }
+
+        String getRentname() {
+            if(rent) {
+                return rentname;
+            }
+            else {
+                return "_";
+            }
+        }
+
+        String getRentday() {
+            if(rent) {
+                return rentday;
+            }
+            else {
+                return "________";
+            }
+        }
+
+        String getReturnday() {
+            if(rent) {
+                return willreturnday;
+            }
+            else return "________";
+        }
     }
 
     void filesave() {
