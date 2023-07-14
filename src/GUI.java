@@ -12,6 +12,7 @@ public class GUI {
 
 class titleUI extends JFrame {
     public titleUI() {
+        programinside utilitys = new programinside();
         setTitle("도서관리 프로그램");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.white);
@@ -41,12 +42,9 @@ class titleUI extends JFrame {
                 addbookUI addbook = new addbookUI();
             }
         });
-
         setSize(1000, 500);
         setVisible(true);
     }
-
-
 }
 
 class bookinfo extends JPanel {
@@ -155,7 +153,6 @@ class Typeinfo extends bookinfo {
 
         this.addLables();
 
-
         this.setLayout(grid);
 
 
@@ -165,7 +162,10 @@ class Typeinfo extends bookinfo {
 }
 
 class addbookUI extends JFrame {
+
     public addbookUI() {
+        FileInOut File = new FileInOut();
+
         setTitle("책 등록");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         GridLayout grid = new GridLayout(3, 2);
@@ -203,6 +203,18 @@ class addbookUI extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                Book newone = new Book(bookname.getText(), writer.getText(), company.getText());
+                File.addbook(newone);
+
+
+                dispose();
+            }
+        });
+
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
             }
         });
 

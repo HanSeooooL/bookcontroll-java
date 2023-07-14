@@ -17,6 +17,7 @@ public class Main {
 
         titleUI title = new titleUI();
 
+
         /*HashMap<String, Book> map = new HashMap<String, Book>();
 
         Book newone = new Book("어린왕자", "생텍쥐페리", "갈리마르");
@@ -169,17 +170,6 @@ class Book{
             dir.write(by);
             sharp = "\n".getBytes();
             dir.write(sharp);
-        }
-        catch (Exception e) {
-            e.getStackTrace();
-        }
-    }
-}
-
-class utilityss {
-    public void filesave(Book a, String direction) {
-        try {
-            OutputStream Output = new FileOutputStream(direction);
         }
         catch (Exception e) {
             e.getStackTrace();
