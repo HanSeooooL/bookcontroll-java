@@ -5,21 +5,44 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.LineBorder;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class GUI {
+    titleUI titleUI;
+    bookinfo bookinfo;
+    Typeinfo Typeinfo;
+    addbookUI addbookUI;
+
 
 }
 
 class titleUI extends JFrame {
-    public titleUI() {
+
+    bookinfo bookinfo;
+
+    public titleUI() throws IOException {
+        int page = 1;
         programinside utilitys = new programinside();
-        setTitle("도서관리 프로그램");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setBackground(Color.white);
+        FileInOut file = new FileInOut();
         Container contentPane = getContentPane();
         JPanel buttons = new JPanel();
         Typeinfo typeinfo = new Typeinfo();
-        bookinfo data[] = new bookinfo[5];
+        ArrayList<Book> Books;
+        ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
+
+        setTitle("도서관리 프로그램");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setBackground(Color.white);
+
+        int displaycount = 2;
+        Books = file.fileRead.pageRead(page, displaycount);
+
+        for(int i = 0; i < file.fileRead.pageloded; i++) {
+            bookinfos.add(new bookinfo(Books.get(i), 10, 80 + (i * 20)));
+        }
+
+
 
         contentPane.setLayout(null);
         buttons.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -32,6 +55,10 @@ class titleUI extends JFrame {
         buttons.add(bt_delete);
         contentPane.add(buttons);
         contentPane.add(typeinfo);
+        for(int i = 0; i < file.fileRead.pageloded; i++) {
+            contentPane.add(bookinfos.get(i));
+        }
+
 
         buttons.setLocation(10, 10);
         buttons.setSize(500, 50);
@@ -42,6 +69,7 @@ class titleUI extends JFrame {
                 addbookUI addbook = new addbookUI();
             }
         });
+
         setSize(1000, 500);
         setVisible(true);
     }
@@ -57,6 +85,7 @@ class bookinfo extends JPanel {
     JLabel willreturnday;
 
     bookinfo(Book one, int x, int y) {
+
         this.bookname = new JLabel(one.getBookname());
         this.Writer = new JLabel(one.getWriter());
         this.company = new JLabel(one.getCompany());
@@ -73,16 +102,21 @@ class bookinfo extends JPanel {
             this.willreturnday = new JLabel(" ");
         }
 
-        LineBorder border = new LineBorder(Color.black);
         GridLayout grid = new GridLayout(1, 7);
         grid.setVgap(0);
+        LineBorder border = new LineBorder(Color.black);
         this.setLocation(x, y);
         this.setSize(980, 20);
+
+        this.setLabelsSize(20, 10);
 
         this.setLabeltextdirection(JLabel.CENTER);
 
         this.makeLineBorders(border);
-        this.setLabelsSize(20, 10);
+
+        this.addLables();
+
+        this.setLayout(grid);
 
     }
 
@@ -131,6 +165,8 @@ class bookinfo extends JPanel {
 class Typeinfo extends bookinfo {
 
     Typeinfo(){
+        GridLayout grid = new GridLayout(1, 7);
+        grid.setVgap(0);
         this.bookname = new JLabel("도서명");
         this.Writer = new JLabel("저자");
         this.company = new JLabel("출판사");
@@ -140,8 +176,6 @@ class Typeinfo extends bookinfo {
         this.willreturnday = new JLabel("반납 예정 일자");
 
         LineBorder border = new LineBorder(Color.black);
-        GridLayout grid = new GridLayout(1, 7);
-        grid.setVgap(0);
         this.setLocation(10, 60);
         this.setSize(980, 20);
 
@@ -204,7 +238,7 @@ class addbookUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Book newone = new Book(bookname.getText(), writer.getText(), company.getText());
-                File.addbook(newone);
+                File.fileSave.addbook(newone);
 
 
                 dispose();

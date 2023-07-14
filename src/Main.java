@@ -4,18 +4,29 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+
+
+
+
+
 
 
 
         titleUI title = new titleUI();
+        /*FileInOut file = new FileInOut();
+
+        Books = file.fileRead.pageRead(1, 1);
+
+        for (int i = 0; i < Books.size(); i++) {
+            Books.get(0).print_book();
+        }*/
+
+
 
 
         /*HashMap<String, Book> map = new HashMap<String, Book>();
@@ -76,6 +87,16 @@ class Book{
 
     }
 
+    Book() {
+        this.bookname = "bookname";
+        this.writer = "writer";
+        this.company = "company";
+        this.rent = false;
+        this.rentname = "_";
+        this.rentday = "________";
+        this.willreturnday = "_________";
+    }
+
     public void rentthebook(String rentname, String rentday, String returnday) {
         this.rent = true;
         this.rentname = rentname;
@@ -101,7 +122,6 @@ class Book{
         }
 
     }
-
     String getBookname() {
         return this.bookname;
     }
@@ -141,6 +161,12 @@ class Book{
             return this.willreturnday;
         }
         else return "________";
+    }
+
+    void setBookinfo(String bookname, String writer, String company) {
+        this.bookname = bookname;
+        this.writer = writer;
+        this.company = company;
     }
 
 
