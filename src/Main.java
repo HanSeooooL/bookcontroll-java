@@ -10,14 +10,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
 
+        GUI.program();
 
-
-
-
-
-
-
-        titleUI title = new titleUI();
+        //titleUI title = new titleUI();
         /*FileInOut file = new FileInOut();
 
         Books = file.fileRead.pageRead(1, 1);

@@ -4,6 +4,7 @@ import java.util.StringTokenizer;
 import java.util.Scanner;
 
 public class FileInOut {
+    static FileInOut File = new FileInOut();
     fileSave fileSave = new fileSave();
     fileRead fileRead = new fileRead();
 
@@ -20,10 +21,10 @@ class fileRead {
 
         try {
             Scanner sc = new Scanner(new File(fileName));
-            while (sc.hasNextLine()) {
+            while (sc.hasNextLine() && i < howmany) {
                 newone = new Book();
                 String line = sc.nextLine();
-                if ((page - 1) * howmany > 0 && i < howmany) {
+                if ((page - 1) * howmany > 0) {
                     page-= 1;
                     continue;
                 }

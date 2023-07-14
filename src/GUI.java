@@ -9,40 +9,47 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class GUI {
-    titleUI titleUI;
-    bookinfo bookinfo;
-    Typeinfo Typeinfo;
-    addbookUI addbookUI;
 
+    static titleUI titleUI;
+    final static int displaycount = 1;
 
+    public static void program() throws IOException {
+        titleUI = new titleUI();
+    }
+
+    static void reload_page(ArrayList<bookinfo> info, ArrayList<Book> books, int page, FileInOut file) throws IOException {
+        books.clear();
+        books = file.fileRead.pageRead(page, displaycount);
+        for(int i = 0; i < file.fileRead.pageloded; i++) {
+            info.add(new bookinfo(books.get(i), 10, 80 + (i * 20)));
+        }
+    }
 }
 
 class titleUI extends JFrame {
+    static ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
+    static int[] page = {1};
+    static ArrayList<Book> Books;
 
-    bookinfo bookinfo;
 
     public titleUI() throws IOException {
-        int page = 1;
         programinside utilitys = new programinside();
         FileInOut file = new FileInOut();
         Container contentPane = getContentPane();
         JPanel buttons = new JPanel();
         Typeinfo typeinfo = new Typeinfo();
-        ArrayList<Book> Books;
         ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
 
         setTitle("도서관리 프로그램");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBackground(Color.white);
 
-        int displaycount = 2;
-        Books = file.fileRead.pageRead(page, displaycount);
+        Books = file.fileRead.pageRead(page[0], GUI.displaycount);
 
         for(int i = 0; i < file.fileRead.pageloded; i++) {
             bookinfos.add(new bookinfo(Books.get(i), 10, 80 + (i * 20)));
+            contentPane.add(bookinfos.get(i));
         }
-
-
 
         contentPane.setLayout(null);
         buttons.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -50,15 +57,15 @@ class titleUI extends JFrame {
         JButton bt_add = new JButton("등록");
         JButton bt_update = new JButton("수정");
         JButton bt_delete = new JButton("삭제");
+        JButton bt_nextpage = new JButton("다음 페이지");
+        JButton bt_prevpage = new JButton("이전 페이지");
         buttons.add(bt_add);
         buttons.add(bt_update);
         buttons.add(bt_delete);
+        buttons.add(bt_prevpage);
+        buttons.add(bt_nextpage);
         contentPane.add(buttons);
         contentPane.add(typeinfo);
-        for(int i = 0; i < file.fileRead.pageloded; i++) {
-            contentPane.add(bookinfos.get(i));
-        }
-
 
         buttons.setLocation(10, 10);
         buttons.setSize(500, 50);
@@ -67,8 +74,24 @@ class titleUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addbookUI addbook = new addbookUI();
+
             }
         });
+
+        bt_nextpage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                page[0] += 1;
+            }
+        });
+
+        bt_prevpage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                page[0] -= 1;
+            }
+        });
+
 
         setSize(1000, 500);
         setVisible(true);
@@ -198,7 +221,6 @@ class Typeinfo extends bookinfo {
 class addbookUI extends JFrame {
 
     public addbookUI() {
-        FileInOut File = new FileInOut();
 
         setTitle("책 등록");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -238,7 +260,12 @@ class addbookUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Book newone = new Book(bookname.getText(), writer.getText(), company.getText());
-                File.fileSave.addbook(newone);
+                FileInOut.File.fileSave.addbook(newone);
+                try {
+                    GUI.reload_page(titleUI.bookinfos, titleUI.Books, titleUI.page[0], FileInOut.File);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
 
 
                 dispose();
