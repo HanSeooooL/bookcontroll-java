@@ -5,40 +5,52 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class GUI {
 
     static titleUI titleUI;
-    final static int displaycount = 1;
+    final static int displaycount = 10;
 
     public static void program() throws IOException {
-        titleUI = new titleUI();
+       titleUI = new titleUI();
     }
 
-    static void reload_page(ArrayList<bookinfo> info, ArrayList<Book> books, int page, FileInOut file) throws IOException {
+    /*static void reload_page(ArrayList<bookinfo> info, ArrayList<Book> books, int page, FileInOut file) throws IOException {
         books.clear();
         books = file.fileRead.pageRead(page, displaycount);
         for(int i = 0; i < file.fileRead.pageloded; i++) {
             info.add(new bookinfo(books.get(i), 10, 80 + (i * 20)));
         }
-    }
+    }*/
 }
 
 class titleUI extends JFrame {
-    static ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
+    //static ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
     static int[] page = {1};
     static ArrayList<Book> Books;
+    JTable table;
+    Container contentPane;
+    static utils utils;
+
 
 
     public titleUI() throws IOException {
         programinside utilitys = new programinside();
         FileInOut file = new FileInOut();
-        Container contentPane = getContentPane();
+        contentPane = getContentPane();
         JPanel buttons = new JPanel();
-        Typeinfo typeinfo = new Typeinfo();
-        ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
+        JPanel displaydata = new JPanel();
+        //Typeinfo typeinfo = new Typeinfo();
+        //ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
+
+        String[] headings = new String[]{"도서명", "저자", "출판사"};
+        DefaultTableModel model = new DefaultTableModel(headings, 0);
+
+        table = new JTable(model);
+
 
         setTitle("도서관리 프로그램");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,12 +58,20 @@ class titleUI extends JFrame {
 
         Books = file.fileRead.pageRead(page[0], GUI.displaycount);
 
+        model = (DefaultTableModel)table.getModel();
+        model.addRow(headings);
+
         for(int i = 0; i < file.fileRead.pageloded; i++) {
-            bookinfos.add(new bookinfo(Books.get(i), 10, 80 + (i * 20)));
-            contentPane.add(bookinfos.get(i));
+            Object[] data = {Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany()};
+            model.addRow(data);
         }
 
-        contentPane.setLayout(null);
+        /*for(int i = 0; i < file.fileRead.pageloded; i++) {
+            bookinfos.add(new bookinfo(Books.get(i), 10, 80 + (i * 20)));
+            contentPane.add(bookinfos.get(i));
+        }*/
+
+        contentPane.setLayout(new BorderLayout());
         buttons.setLayout(new FlowLayout(FlowLayout.LEFT));
 
         JButton bt_add = new JButton("등록");
@@ -64,11 +84,16 @@ class titleUI extends JFrame {
         buttons.add(bt_delete);
         buttons.add(bt_prevpage);
         buttons.add(bt_nextpage);
+        displaydata.add(table);
+        contentPane.add("Center",displaydata);
         contentPane.add(buttons);
-        contentPane.add(typeinfo);
+        //contentPane.add(typeinfo);
 
         buttons.setLocation(10, 10);
         buttons.setSize(500, 50);
+
+        displaydata.setLocation(10, 60);
+        displaydata.setSize(900, 100);
 
         bt_add.addActionListener(new ActionListener() {
             @Override
@@ -96,9 +121,16 @@ class titleUI extends JFrame {
         setSize(1000, 500);
         setVisible(true);
     }
+
+    class utils {
+        void refresh() {
+            contentPane.revalidate(); // 프레임 새로 고침
+            contentPane.repaint(); // 프레임 다시 그리기
+        }
+    }
 }
 
-class bookinfo extends JPanel {
+/*class bookinfo extends JPanel {
     JLabel bookname;
     JLabel Writer;
     JLabel company;
@@ -216,7 +248,7 @@ class Typeinfo extends bookinfo {
 
     }
 
-}
+}*/
 
 class addbookUI extends JFrame {
 
@@ -261,11 +293,7 @@ class addbookUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Book newone = new Book(bookname.getText(), writer.getText(), company.getText());
                 FileInOut.File.fileSave.addbook(newone);
-                try {
-                    GUI.reload_page(titleUI.bookinfos, titleUI.Books, titleUI.page[0], FileInOut.File);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+                titleUI.utils.refresh();
 
 
                 dispose();
