@@ -13,7 +13,7 @@ class fileRead {
     static int loaded;
     private final String datafileName = "/Users/hanseol/data.txt";
     private final String historyfileName = "/Users/hanseol/history.txt";
-    private Scanner sc;
+    private Scanner sc = null;
 
 
     ArrayList<Book> AllbookRead() throws FileNotFoundException {
@@ -41,13 +41,13 @@ class fileRead {
             loaded++;
 
         }
-        sc = null;
+        this.sc = null;
 
         return res;
     }
 
 
-    rentdata checkthebookrent(ArrayList<Book> Books, UUID a) throws IOException{
+    rentdata checkthebookrent(UUID a) throws IOException{
         if(this.sc == null) {
             sc = new Scanner(new File(historyfileName));
         }
@@ -55,16 +55,20 @@ class fileRead {
         rentdata res;
         line = sc.nextLine();
         if(sc.hasNextLine()) {
-            if((res = checkthebookrent(Books, a)) != null) {
+            if((res = checkthebookrent(a)) != null) {
                 return res;
             }
         }
         StringTokenizer token = new StringTokenizer(line, "#");
         if(Objects.equals(a.toString(), token.nextToken())) {
             res = new rentdata(a, UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken());
+            this.sc = null;
             return res;
         }
-        else return null;
+        else {
+            this.sc = null;
+            return null;
+        }
 
 
     }

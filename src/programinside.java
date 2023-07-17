@@ -3,7 +3,7 @@ import java.time.ZoneId;
 import java.util.UUID;
 
 public class programinside {
-    getDays getDays = new getDays();
+    static getDays getDays = new getDays();
 
 
 }
@@ -54,9 +54,41 @@ class getDays {
 
     public String changenumbertochar(int year, int month, int day) {
         String res;
+
         res = Integer.toString(year);
-        res = res.concat(Integer.toString(month));
-        res = res.concat(Integer.toString(day));
+
+        if(month < 10) {
+            res = res.concat("0");
+            res = res.concat(Integer.toString(month));
+        }
+        else res = res.concat(Integer.toString(month));
+
+        if(day < 10) {
+            res = res.concat("0");
+            res = res.concat(Integer.toString(day));
+        }
+        else res = res.concat(Integer.toString(day));
+
+        return res;
+    }
+
+    public String gluecalender(String year, String month, String day) {
+        String res;
+
+        System.out.println(year + month + day);
+
+        res = year;
+
+        if(Integer.parseInt(month) < 10) {
+            res = res.concat("0");
+            res = res.concat(month);
+        }
+        else res = res.concat(month);
+        if(Integer.parseInt(day) < 10) {
+            res = res.concat("0");
+            res = res.concat(day);
+        }
+        else res = res.concat(day);
 
         return res;
     }

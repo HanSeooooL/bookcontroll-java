@@ -117,6 +117,7 @@ class Book{
         System.out.println(this.bookname);
         System.out.println(this.writer);
         System.out.println(this.company);
+        System.out.println(this.rentid);
 
     }
 
@@ -145,6 +146,7 @@ class Book{
     void setID(String a) {
         this.Bookid = UUID.fromString(a);
     }
+    void setRentID(String a) {this.rentid = UUID.fromString(a);}
 
     void setBookinfo(String bookname, String writer, String company) {
         this.bookname = bookname;
@@ -163,6 +165,14 @@ class rentdata {
     rentdata(UUID rentID, UUID bookID, String rentperson, String rentday, String willreturnday) {
         this.bookID = bookID;
         this.rentID = rentID;
+        this.rentperson = rentperson;
+        this.rentday = rentday;
+        this.willreturnday = willreturnday;
+    }
+
+    rentdata(UUID bookID, String rentperson, String rentday, String willreturnday) {
+        this.rentID = UUID.randomUUID();
+        this.bookID = bookID;
         this.rentperson = rentperson;
         this.rentday = rentday;
         this.willreturnday = willreturnday;
