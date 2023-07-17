@@ -4,15 +4,18 @@ import java.awt.event.ActionEvent;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 
 public class GUI {
 
     static titleUI titleUI;
-    final static int displaycount = 10;
+
     public static void program() throws IOException {
        titleUI = new titleUI();
     }
@@ -29,13 +32,17 @@ public class GUI {
 class titleUI extends JFrame {
     //static ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
     static ArrayList<Book> Books;
-    JPanel displaydata;
     static JTable table;
+    JPanel SearchPanel;
     JMenuBar jmenubar;
     JMenu fileJMenu, rentJMenu, viewJMenu;
     JMenuItem Addbookitemofmenu, updatebookitemofmenu, deletebookitemofmenu,
             rentbookitemofmenu, returnbookitemofmenu;
     JMenuItem viewallbookitemofmenu, viewrentbookitemofmenu, viewunrentedbookitemofmenu;
+    JLabel Search;
+    Choice Searchsection;
+    JButton Searchstart;
+    JTextField SearchKeyword;
     String[] headings;
     static DefaultTableModel model;
 
@@ -75,18 +82,25 @@ class titleUI extends JFrame {
     }
 
     static void SearchTable(int section, String Keyword) {
+        ArrayList<Object[]> res = new ArrayList<Object[]>();
         for (int i = 0; i < table.getRowCount(); i++) {
             if (section == 0)  {    //도서명 검색
-                if(!(table.getValueAt(i, 1).toString().contains(Keyword))) {
-                    table.remove(i);
+                if((table.getValueAt(i, 1).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString(),
+                            table.getValueAt(i, 7).toString()});
                 }
             }
+        }
+        model.setNumRows(0);
+        for(int i = 0; i < res.size(); i++) {
+            model.addRow(res.get(i));
         }
     }
 
     static Book tableSelected(int i) {
-        Integer.getInteger((String) table.getValueAt(i, 0));
-        return Books.get(i);
+        i = Integer.parseInt(table.getValueAt(i, 0).toString());
+        return Books.get(i - 1);
     }
 
     static void seeunrentedbook() {
@@ -126,7 +140,6 @@ class titleUI extends JFrame {
     }
 
     public void createComponents() {
-        displaydata = new JPanel();
 
         Addbookitemofmenu = new JMenuItem("도서 등록");
         updatebookitemofmenu = new JMenuItem("도서 수정");
@@ -174,15 +187,37 @@ class titleUI extends JFrame {
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
+        table.setAutoCreateRowSorter(true);
+        TableRowSorter sorter = new TableRowSorter(table.getModel());
+        table.setRowSorter(sorter);
 
-        displaydata.setLocation(10, 60);
-        displaydata.setSize(900, 100);
+        Search = new JLabel("검색:");
+
+        Searchsection = new Choice();
+        Searchsection.add("도서명");
+        Searchsection.add("저자");
+        Searchsection.add("출판사");
+        Searchsection.add("대여인");
+        Searchsection.setLocation(10, 400);
+
+        SearchKeyword = new JTextField("");
+        SearchKeyword.setPreferredSize(new Dimension(200, 20));
+
+        Searchstart = new JButton("검색");
+
+        SearchPanel = new JPanel();
+        SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        SearchPanel.add(Search);
+        SearchPanel.add(Searchsection);
+        SearchPanel.add(SearchKeyword);
+        SearchPanel.add(Searchstart);
 
         Container contentPane = getContentPane();
         JScrollPane jScrollPane = new JScrollPane(table);
         contentPane.setLayout(new BorderLayout());
         contentPane.add(jmenubar, BorderLayout.NORTH);
         contentPane.add(jScrollPane, BorderLayout.CENTER);
+        contentPane.add(SearchPanel, BorderLayout.SOUTH);
     }
 
     public void setFrame() {
@@ -205,6 +240,8 @@ class titleUI extends JFrame {
         viewallbookitemofmenu.addActionListener(titleJMenuEventListener);
         viewrentbookitemofmenu.addActionListener(titleJMenuEventListener);
         viewunrentedbookitemofmenu.addActionListener(titleJMenuEventListener);
+        titleSearchEventListener titleSearchEventListener = new titleSearchEventListener(this);
+        Searchstart.addActionListener(titleSearchEventListener);
         titleJTableEventListener titleJTableEventListener = new titleJTableEventListener(this);
         table.addMouseListener(titleJTableEventListener);
         this.addWindowListener(titleJMenuEventListener);
@@ -342,26 +379,116 @@ class updatebookUI extends JFrame{
 class deleteBookUI extends JFrame{
     Book one;
 
-    JLabel booknamedisplay, writerdisplay, companydisplay;
+    rentdata rentdata;
+    JPanel displayrentinfo, buttonplace, centerplace;
+    JLabel booknamee, writerr, companyy, rentpersonn, rentdayy, willreturndayy;
+    JLabel bookname, writer, company, rentperson, rentday, willreturnday;
+    JButton returnfinish, cancel;
 
-    public deleteBookUI() {
+    public deleteBookUI(Book a) throws IOException {
+        this.one = a;
+        if(!this.one.getRentID().equals("0")) {
+            rentdata = FileInOut.File.fileRead.checkthebookrent(UUID.fromString(one.getRentID()));
+        }
+        else {
+            rentdata = new rentdata(null, this.one.getID(), " ", " ", " ");
+        }
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
     }
 
     public void createComponents() {
-        booknamedisplay = new JLabel(one.getBookname());
-        writerdisplay = new JLabel(one.getWriter());
-        companydisplay = new JLabel(one.getCompany());
+        //GridBagLayout grid = new GridBagLayout();
+        //GridBagConstraints gbc = new GridBagConstraints();
+        GridLayout grid = new GridLayout(7, 2);
+        grid.setVgap(20);
+        grid.setHgap(5);
+        LineBorder border = new LineBorder(Color.BLACK, 1);
+
+        this.bookname = new JLabel(this.one.getBookname());
+        this.writer = new JLabel(this.one.getWriter());
+        this.company = new JLabel(this.one.getCompany());
+        this.rentperson = new JLabel(this.rentdata.getRentPerson());
+        this.rentday = new JLabel(this.rentdata.getRentDay());
+        this.willreturnday = new JLabel(this.rentdata.getwillReturnday());
+
+
+        this.bookname.setPreferredSize(new Dimension(450, 20));
+
+        this.booknamee = new JLabel("도서명");
+        this.writerr = new JLabel("저자");
+        this.companyy = new JLabel("출판사");
+        this.rentpersonn = new JLabel("대여인");
+        this.rentdayy = new JLabel("대여일");
+        this.willreturndayy = new JLabel("반납 예정일");
+
+        this.booknamee.setHorizontalAlignment(JLabel.CENTER);
+        this.writerr.setHorizontalAlignment(JLabel.CENTER);
+        this.companyy.setHorizontalAlignment(JLabel.CENTER);
+        this.rentpersonn.setHorizontalAlignment(JLabel.CENTER);
+        this.rentdayy.setHorizontalAlignment(JLabel.CENTER);
+        this.willreturndayy.setHorizontalAlignment(JLabel.CENTER);
+
+
+        this.returnfinish = new JButton("삭제");
+        this.cancel = new JButton("취소");
+
+        this.displayrentinfo = new JPanel();
+        this.displayrentinfo.setLayout(grid);
+        this.displayrentinfo.add(this.booknamee);
+        this.displayrentinfo.add(this.bookname);
+        this.displayrentinfo.add(this.writerr);
+        this.displayrentinfo.add(this.writer);
+        this.displayrentinfo.add(this.companyy);
+        this.displayrentinfo.add(this.company);
+        this.displayrentinfo.add(this.rentpersonn);
+        this.displayrentinfo.add(this.rentperson);
+        this.displayrentinfo.add(this.rentdayy);
+        this.displayrentinfo.add(this.rentday);
+        this.displayrentinfo.add(this.willreturndayy);
+        this.displayrentinfo.add(this.willreturnday);
+
+        bookname.setOpaque(true);
+        bookname.setBackground(Color.WHITE);
+        bookname.setBorder(border);
+        writer.setOpaque(true);
+        writer.setBackground(Color.WHITE);
+        writer.setBorder(border);
+        company.setOpaque(true);
+        company.setBackground(Color.WHITE);
+        company.setBorder(border);
+        rentperson.setOpaque(true);
+        rentperson.setBackground(Color.WHITE);
+        rentperson.setBorder(border);
+        rentday.setOpaque(true);
+        rentday.setBackground(Color.WHITE);
+        rentday.setBorder(border);
+        willreturnday.setOpaque(true);
+        willreturnday.setBackground(Color.WHITE);
+        willreturnday.setBorder(border);
+
+        this.buttonplace = new JPanel();
+        this.buttonplace.add(returnfinish);
+        this.buttonplace.add(cancel);
+        this.buttonplace.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        this.centerplace = new JPanel();
+        this.centerplace.setLayout(new BorderLayout());
+        this.centerplace.add(this.displayrentinfo, BorderLayout.CENTER);
+
+        Container c = getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(this.centerplace, BorderLayout.CENTER);
+        c.add(this.buttonplace, BorderLayout.SOUTH);
 
     }
 
     public void setFrame() {
-        setTitle("책 삭제");
+        setTitle("도서 삭제");
         this.setBackground(Color.white);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(500,180));
+        this.setPreferredSize(new Dimension(500,350));
         this.pack();
         setVisible(true);
     }
@@ -389,7 +516,8 @@ class rentbookUI extends JFrame {
 
     public void createComponents() {
         GridLayout grid = new GridLayout(6, 2);
-        grid.setVgap(5);
+        grid.setVgap(20);
+        grid.setHgap(5);
 
         LineBorder border = new LineBorder(Color.BLACK, 1);
 
@@ -426,6 +554,7 @@ class rentbookUI extends JFrame {
         rentfinish = new JButton("대여");
         cancel = new JButton("취소");
         rentname = new JTextField("");
+        rentname.setHorizontalAlignment(JTextField.CENTER);
 
         rentyear = new Choice();
         rentmonth = new Choice();
@@ -485,17 +614,17 @@ class rentbookUI extends JFrame {
         choices.setSize(500, 50);
 
         Container c = getContentPane();
-        c.setLayout(new FlowLayout());
+        c.setLayout(new BorderLayout());
 
-        c.add(insertlines);
-        c.add(choices);
+        c.add(insertlines, BorderLayout.CENTER);
+        c.add(choices, BorderLayout.SOUTH);
     }
 
     public void setFrame() {
         setTitle("도서 대여");
         this.setBackground(Color.white);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(500,350));
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(500,350));
         this.pack();
         setVisible(true);
     }
@@ -506,13 +635,178 @@ class rentbookUI extends JFrame {
         cancel.addActionListener(rentbookUIEventListener);
         this.addWindowListener(rentbookUIEventListener);
     }
-
 }
 
 class returnbookUI extends JFrame {
 
     Book one;
-    public returnbookUI(Book a) {
+    rentdata rentdata;
+    JPanel displayrentinfo, buttonplace, centerplace;
+    JLabel booknamee, writerr, companyy, rentpersonn, rentdayy, willreturndayy, todayy;
+    JLabel bookname, writer, company, rentperson, rentday, willreturnday, today;
+    JButton returnfinish, cancel;
+    public returnbookUI(Book a) throws IOException {
+        this.one = a;
+        rentdata = FileInOut.File.fileRead.checkthebookrent(UUID.fromString(one.getRentID()));
+        this.createComponents();
+        this.setFrame();
+        this.ConnectEventListener();
+
+    }
+
+    public void createComponents() {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        //GridBagLayout grid = new GridBagLayout();
+        //GridBagConstraints gbc = new GridBagConstraints();
+        GridLayout grid = new GridLayout(7, 2);
+        grid.setVgap(20);
+        grid.setHgap(5);
+        LineBorder border = new LineBorder(Color.BLACK, 1);
+
+        this.bookname = new JLabel(this.one.getBookname());
+        this.writer = new JLabel(this.one.getWriter());
+        this.company = new JLabel(this.one.getCompany());
+        this.rentperson = new JLabel(this.rentdata.getRentPerson());
+        this.rentday = new JLabel(this.rentdata.getRentDay());
+        this.willreturnday = new JLabel(this.rentdata.getwillReturnday());
+        this.today = new JLabel(programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
+
+
+        this.bookname.setPreferredSize(new Dimension(450, 20));
+
+        this.booknamee = new JLabel("도서명");
+        this.writerr = new JLabel("저자");
+        this.companyy = new JLabel("출판사");
+        this.rentpersonn = new JLabel("대여인");
+        this.rentdayy = new JLabel("대여일");
+        this.willreturndayy = new JLabel("반납 예정일");
+        this.todayy = new JLabel("오늘 날짜");
+
+        this.booknamee.setHorizontalAlignment(JLabel.CENTER);
+        this.writerr.setHorizontalAlignment(JLabel.CENTER);
+        this.companyy.setHorizontalAlignment(JLabel.CENTER);
+        this.rentpersonn.setHorizontalAlignment(JLabel.CENTER);
+        this.rentdayy.setHorizontalAlignment(JLabel.CENTER);
+        this.willreturndayy.setHorizontalAlignment(JLabel.CENTER);
+        this.todayy.setHorizontalAlignment(JLabel.CENTER);
+
+
+        this.returnfinish = new JButton("반납");
+        this.cancel = new JButton("취소");
+
+        this.displayrentinfo = new JPanel();
+        this.displayrentinfo.setLayout(grid);
+        this.displayrentinfo.add(this.booknamee);
+        this.displayrentinfo.add(this.bookname);
+        this.displayrentinfo.add(this.writerr);
+        this.displayrentinfo.add(this.writer);
+        this.displayrentinfo.add(this.companyy);
+        this.displayrentinfo.add(this.company);
+        this.displayrentinfo.add(this.rentpersonn);
+        this.displayrentinfo.add(this.rentperson);
+        this.displayrentinfo.add(this.rentdayy);
+        this.displayrentinfo.add(this.rentday);
+        this.displayrentinfo.add(this.willreturndayy);
+        this.displayrentinfo.add(this.willreturnday);
+        this.displayrentinfo.add(this.todayy);
+        this.displayrentinfo.add(this.today);
+
+        bookname.setOpaque(true);
+        bookname.setBackground(Color.WHITE);
+        bookname.setBorder(border);
+        writer.setOpaque(true);
+        writer.setBackground(Color.WHITE);
+        writer.setBorder(border);
+        company.setOpaque(true);
+        company.setBackground(Color.WHITE);
+        company.setBorder(border);
+        rentperson.setOpaque(true);
+        rentperson.setBackground(Color.WHITE);
+        rentperson.setBorder(border);
+        rentday.setOpaque(true);
+        rentday.setBackground(Color.WHITE);
+        rentday.setBorder(border);
+        willreturnday.setOpaque(true);
+        willreturnday.setBackground(Color.WHITE);
+        willreturnday.setBorder(border);
+        today.setOpaque(true);
+        today.setBackground(Color.WHITE);
+        today.setBorder(border);
+
+        this.buttonplace = new JPanel();
+        this.buttonplace.add(returnfinish);
+        this.buttonplace.add(cancel);
+        this.buttonplace.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
+        this.centerplace = new JPanel();
+        this.centerplace.setLayout(new BorderLayout());
+        this.centerplace.add(this.displayrentinfo, BorderLayout.CENTER);
+
+        Container c = getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(this.centerplace, BorderLayout.CENTER);
+        c.add(this.buttonplace, BorderLayout.SOUTH);
+
+    }
+
+    public void setFrame() {
+        setTitle("도서 반납");
+        this.setBackground(Color.white);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setPreferredSize(new Dimension(500,350));
+        this.pack();
+        setVisible(true);
+    }
+
+    public void ConnectEventListener() {
+        returnbookUIEventListener returnbookUIEventListener = new returnbookUIEventListener(this);
+        returnfinish.addActionListener(returnbookUIEventListener);
+        cancel.addActionListener(returnbookUIEventListener);
+        this.addWindowListener(returnbookUIEventListener);
+    }
+}
+
+class errorUI extends JFrame {
+    String msg;
+    JLabel message;
+    JButton accept;
+    JPanel buttonspace;
+    public errorUI(String msg) {
+        this.msg = msg;
+        this.createComponents();
+        this.setFrame();
+        this.ConnectEventListener();
+
+    }
+
+    public void createComponents() {
+        this.message = new JLabel(this.msg);
+        this.message.setHorizontalAlignment(JLabel.CENTER);
+
+        this.accept = new JButton("확인");
+
+        this.buttonspace = new JPanel();
+        this.buttonspace.add(this.accept);
+
+        Container c = getContentPane();
+        GridLayout grid = new GridLayout(2, 1);
+        c.setLayout(grid);
+        c.add(this.message);
+        c.add(this.buttonspace);
+    }
+
+    public void setFrame() {
+        this.setTitle("에러");
+        this.setBackground(Color.white);
+        this.setPreferredSize(new Dimension(400, 150));
+        this.pack();
+        this.setVisible(true);
+    }
+
+    public void ConnectEventListener() {
+        errorUIEventListener errorUIEventListener = new errorUIEventListener(this);
+        this.accept.addActionListener(errorUIEventListener);
+        this.addWindowListener(errorUIEventListener);
 
     }
 }

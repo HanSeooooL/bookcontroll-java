@@ -13,6 +13,7 @@ class fileRead {
     static int loaded;
     private final String datafileName = "/Users/hanseol/data.txt";
     private final String historyfileName = "/Users/hanseol/history.txt";
+    private final String rentfileName = "/Users/hanseol/rent.txt";
     private Scanner sc = null;
 
 
@@ -49,7 +50,7 @@ class fileRead {
 
     rentdata checkthebookrent(UUID a) throws IOException{
         if(this.sc == null) {
-            sc = new Scanner(new File(historyfileName));
+            sc = new Scanner(new File(rentfileName));
         }
         String line;
         rentdata res;
@@ -133,9 +134,8 @@ class fileSave {
         }
     }
 
-    void addhistory(rentdata rent) throws IOException{
-        OutputStream dir = new FileOutputStream("/Users/hanseol/history.txt", true);
-        UUID id = UUID.randomUUID();
+    void addrent(rentdata rent) throws IOException{
+        OutputStream dir = new FileOutputStream("/Users/hanseol/rent.txt", true);
         byte[] by = rent.getrentID().toString().getBytes();
         byte[] sharp = "#".getBytes();
         dir.write(by);
@@ -153,6 +153,22 @@ class fileSave {
         dir.write(by);
         dir.write("\n".getBytes());
 
+    }
 
+    void addhistory(rentdata rent) throws IOException {
+        OutputStream dir = new FileOutputStream("/Users/hanseol/history.txt", true);
+        byte[] by = rent.getbookID().toString().getBytes();
+        byte[] sharp = "#".getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getRentPerson().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getRentDay().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getwillReturnday().getBytes();
+        dir.write(by);
+        dir.write("\n".getBytes());
     }
 }

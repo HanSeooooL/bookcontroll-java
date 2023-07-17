@@ -26,18 +26,50 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
         else if(actionJMenuItem.getText().equals("도서 수정")) {
             System.out.println("도서 수정");
             int row = titleUI.table.getSelectedRow();
-            updatebookUI updatebook = new updatebookUI(titleUI.tableSelected(row));
+            if(row == -1) {
+                errorUI errorUI = new errorUI("도서를 선택해주십시오.");
+            }
+            else {
+                updatebookUI updatebook = new updatebookUI(titleUI.tableSelected(row));
+            }
         }
         else if(actionJMenuItem.getText().equals("도서 삭제")) {
             System.out.println("도서 삭제");
             int row = titleUI.table.getSelectedRow();
+            if(row == -1) {
+                errorUI errorUI = new errorUI("도서를 선택해주십시오.");
+            }
+            else {
+                try {
+                    deleteBookUI deleteBookUI = new deleteBookUI(titleUI.tableSelected(row));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         }
         else if(actionJMenuItem.getText().equals("도서 대여")) {
             int row = titleUI.table.getSelectedRow();
-            rentbookUI rentbook = new rentbookUI(titleUI.tableSelected(row));
+            if(row == -1) {
+                errorUI errorUI = new errorUI("도서를 선택해주십시오.");
+            }
+            else {
+                rentbookUI rentbook = new rentbookUI(titleUI.tableSelected(row));
+            }
         }
         else if(actionJMenuItem.getText().equals("도서 반납")) {
             System.out.println("도서 반납");
+            int row = titleUI.table.getSelectedRow();
+            if(row == -1) {
+                errorUI errorUI = new errorUI("도서를 선택해주십시오.");
+            }
+            else {
+                try {
+                    returnbookUI returnbook = new returnbookUI(titleUI.tableSelected(row));
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
         }
         else if(actionJMenuItem.getText().equals("모든 책 보기")) {
             System.out.println("모든 책 보기");
@@ -60,7 +92,6 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
             System.out.println("보유중인 책만 보기");
             titleUI.seeunrentedbook();
         }
-
     }
 
     @Override
@@ -96,6 +127,22 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
     @Override
     public void windowDeactivated(WindowEvent e) {
 
+    }
+}
+
+class titleSearchEventListener implements  ActionListener {
+    titleUI titleUI;
+
+    titleSearchEventListener(titleUI titleUI) {
+        this.titleUI = titleUI;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton actionJButton = (JButton)e.getSource();
+        if(actionJButton.getText().equals("검색")) {
+            titleUI.SearchTable(titleUI.Searchsection.getSelectedIndex(), titleUI.SearchKeyword.getText());
+        }
     }
 }
 
@@ -280,7 +327,7 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
                             rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()), rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
             rentbookUI.one.setRentID(newdata.getrentID().toString());
             try {
-                FileInOut.File.fileSave.addhistory(newdata);
+                FileInOut.File.fileSave.addrent(newdata);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -295,6 +342,164 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
         else if(actionJbutton.getText().equals("취소")) {
             rentbookUI.dispose();
         }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+}
+class deletebookUIEventListener implements  ActionListener, WindowListener {
+
+    deleteBookUI deleteBookUI;
+
+    deletebookUIEventListener(deleteBookUI deleteBookUI) {
+        this.deleteBookUI = deleteBookUI;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+}
+
+class returnbookUIEventListener implements  ActionListener, WindowListener {
+
+    returnbookUI returnbookUI;
+
+
+    returnbookUIEventListener(returnbookUI returnbookUI) {
+        this.returnbookUI = returnbookUI;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton actionJButton = (JButton)e.getSource();
+        if(actionJButton.getText().equals("반납")) {
+            System.out.println("반납");
+        }
+        else if(actionJButton.getText().equals("취소")) {
+            System.out.println("취소");
+            this.returnbookUI.dispose();
+        }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+}
+
+class errorUIEventListener implements ActionListener, WindowListener {
+
+    errorUI errorUI;
+
+    public errorUIEventListener(errorUI errorUI) {
+        this.errorUI = errorUI;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton actionJButton = (JButton)e.getSource();
+        if(actionJButton.getText().equals("확인")) {
+            this.errorUI.dispose();
+        }
+
     }
 
     @Override

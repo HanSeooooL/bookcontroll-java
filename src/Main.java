@@ -16,9 +16,6 @@ public class Main {
 
         GUI.program();
 
-
-
-
         //titleUI title = new titleUI();
         /*FileInOut file = new FileInOut();
 
@@ -105,7 +102,7 @@ class Book{
         rentdata newone = new rentdata(rentid, this.Bookid, rentname, rentday, returnday);
         newone.print_rentdata();
         //FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
-        FileInOut.File.fileSave.addhistory(newone);
+        FileInOut.File.fileSave.addrent(newone);
 
 
     }
