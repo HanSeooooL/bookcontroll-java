@@ -94,7 +94,11 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
         }
         else if(actionJMenuItem.getText().equals("모든 대여 내역 조회")) {
             System.out.println("모든 대여 내역 조회");
-            viewhistoryUI viewhistory = new viewhistoryUI();
+            try {
+                viewhistoryUI viewhistory = new viewhistoryUI();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
@@ -396,6 +400,7 @@ class deletebookUIEventListener implements  ActionListener, WindowListener {
         JButton ActionJButton = (JButton)e.getSource();
 
         if(ActionJButton.getText().equals("삭제")) {
+            deletewarningUI deletewarning = new deletewarningUI(this.deleteBookUI);
 
         }
         else if (ActionJButton.getText().equals("취소")) {
@@ -472,6 +477,91 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
             System.out.println("취소");
             this.returnbookUI.dispose();
         }
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+}
+
+class viewhistorySearchEventListener implements  ActionListener {
+    viewhistoryUI viewhistoryUI;
+
+    viewhistorySearchEventListener(viewhistoryUI viewhistoryUI) {
+        this.viewhistoryUI = viewhistoryUI;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton actionJButton = (JButton)e.getSource();
+        if(actionJButton.getText().equals("검색")) {
+            viewhistoryUI.SearchTable(viewhistoryUI.Searchsection.getSelectedIndex(), viewhistoryUI.SearchKeyword.getText());
+        }
+    }
+}
+
+class deletewarningUIEventListener implements ActionListener, WindowListener{
+
+    deletewarningUI deletewarningUI;
+
+    deletewarningUIEventListener(deletewarningUI deletewarningUI) {
+        this.deletewarningUI = deletewarningUI;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton actionJButton = (JButton)e.getSource();
+        if(actionJButton.getText().equals("삭제")) {
+            try {
+                titleUI.deletethebook(deletewarningUI.deleteBookUI.one);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
+            try {
+                titleUI.reloadTable();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            this.deletewarningUI.deleteBookUI.dispose();
+            this.deletewarningUI.dispose();
+
+        }
+        else if(actionJButton.getText().equals("취소")) {
+            this.deletewarningUI.dispose();
+        }
+
     }
 
     @Override

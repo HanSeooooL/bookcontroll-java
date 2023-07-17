@@ -95,6 +95,27 @@ class titleUI extends JFrame {
                             table.getValueAt(i, 7).toString(), table.getValueAt(i, 8).toString()});
                 }
             }
+            else if(section == 1) {
+                if((table.getValueAt(i, 2).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString(),
+                            table.getValueAt(i, 7).toString(), table.getValueAt(i, 8).toString()});
+                }
+            }
+            else if (section == 2) {
+                if((table.getValueAt(i, 3).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString(),
+                            table.getValueAt(i, 7).toString(), table.getValueAt(i, 8).toString()});
+                }
+            }
+            else if (section == 3) {
+                if((table.getValueAt(i, 5).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString(),
+                            table.getValueAt(i, 7).toString(), table.getValueAt(i, 8).toString()});
+                }
+            }
         }
         model.setNumRows(0);
         for(int i = 0; i < res.size(); i++) {
@@ -158,6 +179,25 @@ class titleUI extends JFrame {
             }
         }
         FileInOut.File.fileSave.saveallrent(rents);
+    }
+
+    static void deletethebook(Book a) throws IOException {
+        a.setID(null);
+        ArrayList<rentdata> rents = FileInOut.File.fileRead.AllrentdataRead();
+        ArrayList<historydata> historys = FileInOut.File.fileRead.AllhistorydataRead();
+        for (int i = 0; i < rents.size(); i++) {
+            if (rents.get(i).getrentID().toString().equals(a.getRentID())) {
+                rents.get(i).markrentID();
+                break;
+            }
+        }
+        for(int i = 0; i < historys.size(); i++) {
+            if(historys.get(i).getbookID().toString().equals(a.getID().toString())) {
+                historys.get(i).markbookID();
+            }
+        }
+        FileInOut.File.fileSave.saveallrent(rents);
+        FileInOut.File.fileSave.saveallhistory(historys);
     }
 
     public void createComponents() {
@@ -261,6 +301,7 @@ class titleUI extends JFrame {
         deletebookitemofmenu.addActionListener(titleJMenuEventListener);
         rentbookitemofmenu.addActionListener(titleJMenuEventListener);
         returnbookitemofmenu.addActionListener(titleJMenuEventListener);
+        viewhistoryitemofmenu.addActionListener(titleJMenuEventListener);
         viewallbookitemofmenu.addActionListener(titleJMenuEventListener);
         viewrentbookitemofmenu.addActionListener(titleJMenuEventListener);
         viewunrentedbookitemofmenu.addActionListener(titleJMenuEventListener);
@@ -407,7 +448,7 @@ class deleteBookUI extends JFrame{
     JPanel displayrentinfo, buttonplace, centerplace;
     JLabel booknamee, writerr, companyy, rentpersonn, rentdayy, willreturndayy;
     JLabel bookname, writer, company, rentperson, rentday, willreturnday;
-    JButton returnfinish, cancel;
+    JButton deletefinish, cancel;
 
     public deleteBookUI(Book a) throws IOException {
         this.one = a;
@@ -437,7 +478,6 @@ class deleteBookUI extends JFrame{
         this.rentday = new JLabel(this.rentdata.getRentDay());
         this.willreturnday = new JLabel(this.rentdata.getwillReturnday());
 
-
         this.bookname.setPreferredSize(new Dimension(450, 20));
 
         this.booknamee = new JLabel("도서명");
@@ -454,8 +494,7 @@ class deleteBookUI extends JFrame{
         this.rentdayy.setHorizontalAlignment(JLabel.CENTER);
         this.willreturndayy.setHorizontalAlignment(JLabel.CENTER);
 
-
-        this.returnfinish = new JButton("삭제");
+        this.deletefinish = new JButton("삭제");
         this.cancel = new JButton("취소");
 
         this.displayrentinfo = new JPanel();
@@ -493,7 +532,7 @@ class deleteBookUI extends JFrame{
         willreturnday.setBorder(border);
 
         this.buttonplace = new JPanel();
-        this.buttonplace.add(returnfinish);
+        this.buttonplace.add(deletefinish);
         this.buttonplace.add(cancel);
         this.buttonplace.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
@@ -518,6 +557,11 @@ class deleteBookUI extends JFrame{
     }
 
     public void ConnectEventListener() {
+        deletebookUIEventListener deletebookUIEventListener = new deletebookUIEventListener(this);
+        deletefinish.addActionListener(deletebookUIEventListener);
+        cancel.addActionListener(deletebookUIEventListener);
+        this.addWindowListener(deletebookUIEventListener);
+
 
     }
 }
@@ -792,20 +836,130 @@ class returnbookUI extends JFrame {
 
 class viewhistoryUI extends JFrame{
 
-    ArrayList<rentdata> rentdata;
+    static ArrayList<rentdata> rentdata;
+    static ArrayList<historydata> historydata;
 
-    public viewhistoryUI() {
+    JPanel SearchPanel;
+
+    static JTable table;
+    JLabel Search;
+    Choice Searchsection;
+    JButton Searchstart;
+    JTextField SearchKeyword;
+    String[] headings;
+    JScrollPane jScrollPane;
+    static DefaultTableModel model;
+
+    public viewhistoryUI() throws IOException {
+        this.createComponents();
+        this.setFrame();
+        this.ConnectEventListener();
+
+        reloadTable();
+    }
+
+    static void reloadTable() throws IOException {
+        Book one;
+        model.setNumRows(0);
+        rentdata = FileInOut.File.fileRead.AllrentdataRead();
+        historydata = FileInOut.File.fileRead.AllhistorydataRead();
+
+        for(int i = 0; i < rentdata.size(); i++) {
+            one = searchwithbookID(rentdata.get(i).getbookID());
+            if(one == null) continue;
+
+            Object[] data = {"O", one.getBookname(), one.getWriter(), one.getCompany(), rentdata.get(i).getRentPerson(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
+            model.addRow(data);
+        }
+
+        for(int i = 0; i < historydata.size(); i++) {
+            one = searchwithbookID(historydata.get(i).getbookID());
+            if(one == null) continue;
+
+            Object[] data = {"X", one.getBookname(), one.getWriter(), one.getCompany(), historydata.get(i).getRentPerson(), historydata.get(i).getRentDay(), historydata.get(i).getReturnday()};
+            model.addRow(data);
+        }
 
     }
 
-    public void createComponents() {
+    static void SearchTable(int section, String Keyword) {
+        ArrayList<Object[]> res = new ArrayList<Object[]>();
+        for (int i = 0; i < table.getRowCount(); i++) {
+            if (section == 0)  {    //도서명 검색
+                if((table.getValueAt(i, 1).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
+                            table.getValueAt(i, 6).toString()});
+                }
+            }
+        }
+        model.setNumRows(0);
+        for(int i = 0; i < res.size(); i++) {
+            model.addRow(res.get(i));
+        }
+    }
 
+    static Book searchwithbookID(UUID bookID) {
+        Book res = null;
+        for(int i = 0; i < titleUI.Books.size(); i++) {
+            if(titleUI.Books.get(i).getID().equals(bookID)) {
+                res = titleUI.Books.get(i);
+                break;
+            }
+        }
+        return res;
+    }
+
+    public void createComponents() {
+        headings = new String[]{"대여중", "도서명", "저자", "출판사", "대여인", "대여일자", "반납일자"};
+        model = new DefaultTableModel(headings, 0) {
+            public boolean isCellEditable(int rowIndex, int mCollndex) {
+                return false;
+            }
+        };
+        table = new JTable(model);
+        //this.model.addRow(headings);
+        table.setGridColor(Color.BLACK);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
+        table.setAutoCreateRowSorter(true);
+        TableRowSorter sorter = new TableRowSorter(table.getModel());
+        table.setRowSorter(sorter);
+
+        Search = new JLabel("검색:");
+
+        Searchsection = new Choice();
+        Searchsection.add("도서명");
+        Searchsection.add("저자");
+        Searchsection.add("출판사");
+        Searchsection.add("대여인");
+        Searchsection.setLocation(10, 400);
+
+        Searchstart = new JButton("검색");
+
+        SearchKeyword = new JTextField("");
+        SearchKeyword.setPreferredSize(new Dimension(200, 20));
+
+        SearchPanel = new JPanel();
+        SearchPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        SearchPanel.add(Search);
+        SearchPanel.add(Searchsection);
+        SearchPanel.add(SearchKeyword);
+        SearchPanel.add(Searchstart);
+
+        JScrollPane jScrollPane = new JScrollPane(table);
+
+        Container c = getContentPane();
+        c.setLayout(new BorderLayout());
+        c.add(jScrollPane, BorderLayout.CENTER);
+        c.add(SearchPanel, BorderLayout.SOUTH);
     }
 
     public void setFrame() {
         setTitle("대여내역 조회");
         this.setBackground(Color.white);
-        setLocation(100, 200);
+        setLocation(150, 250);
         setPreferredSize(new Dimension(1000, 500));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.pack();
@@ -813,6 +967,59 @@ class viewhistoryUI extends JFrame{
     }
 
     public void ConnectEventListener() {
+        viewhistorySearchEventListener viewhistorySearchEventListener = new viewhistorySearchEventListener(this);
+        Searchstart.addActionListener(viewhistorySearchEventListener);
+
+    }
+}
+
+class deletewarningUI extends JFrame {
+
+    deleteBookUI deleteBookUI;
+    String msg;
+    JLabel message;
+    JButton accept, cancel;
+    JPanel buttonspace;
+    public deletewarningUI(deleteBookUI deleteBookUI) {
+        this.deleteBookUI = deleteBookUI;
+        this.createComponents();
+        this.setFrame();
+        this.ConnectEventListener();
+
+    }
+
+    public void createComponents() {
+        msg = "도서가 대여중일 경우 그 정보도 함께 삭제됩니다. 삭제하시겠습니까?";
+        this.message = new JLabel(this.msg);
+        this.message.setHorizontalAlignment(JLabel.CENTER);
+
+        this.accept = new JButton("삭제");
+        this.cancel = new JButton("취소");
+
+        this.buttonspace = new JPanel();
+        this.buttonspace.add(this.accept);
+        this.buttonspace.add(this.cancel);
+
+        Container c = getContentPane();
+        GridLayout grid = new GridLayout(2, 1);
+        c.setLayout(grid);
+        c.add(this.message);
+        c.add(this.buttonspace);
+    }
+
+    public void setFrame() {
+        this.setTitle("삭제 경고");
+        this.setBackground(Color.white);
+        this.setPreferredSize(new Dimension(400, 150));
+        this.pack();
+        this.setVisible(true);
+    }
+
+    public void ConnectEventListener() {
+        deletewarningUIEventListener deletewarningUIEventListener = new deletewarningUIEventListener(this);
+        accept.addActionListener(deletewarningUIEventListener);
+        cancel.addActionListener(deletewarningUIEventListener);
+        this.addWindowListener(deletewarningUIEventListener);
 
     }
 }
