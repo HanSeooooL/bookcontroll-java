@@ -48,6 +48,8 @@ class getDays {
         reslong = nowdayslong - returndayslong;
 
         res = Long.valueOf(reslong).intValue(); //Long to int
+        if(res < 0)
+            return 0;
 
         return res;
     }

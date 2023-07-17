@@ -182,7 +182,6 @@ class titleUI extends JFrame {
     }
 
     static void deletethebook(Book a) throws IOException {
-        a.setID(null);
         ArrayList<rentdata> rents = FileInOut.File.fileRead.AllrentdataRead();
         ArrayList<historydata> historys = FileInOut.File.fileRead.AllhistorydataRead();
         for (int i = 0; i < rents.size(); i++) {
@@ -196,6 +195,7 @@ class titleUI extends JFrame {
                 historys.get(i).markbookID();
             }
         }
+        a.setID(null);
         FileInOut.File.fileSave.saveallrent(rents);
         FileInOut.File.fileSave.saveallhistory(historys);
     }
