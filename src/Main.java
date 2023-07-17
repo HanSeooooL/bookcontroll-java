@@ -143,7 +143,7 @@ class Book{
     void setID(String a) {
         this.Bookid = UUID.fromString(a);
     }
-    void setRentID(String a) {this.rentid = UUID.fromString(a);}
+    void setRentID(UUID a) {this.rentid = a;}
 
     void setBookinfo(String bookname, String writer, String company) {
         this.bookname = bookname;
@@ -184,5 +184,27 @@ class rentdata {
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getwillReturnday() {return willreturnday;}
+    void markrentID() {
+        this.rentID = null;
+    }
+
+}
+
+class historydata {
+    private UUID bookID;
+    private String rentperson;
+    private String rentday;
+    private String returnday;
+
+    historydata(UUID bookId, String rentperson, String rentday, String returnday) {
+        this.bookID = bookId;
+        this.rentperson = rentperson;
+        this.rentday = rentday;
+        this.returnday = returnday;
+    }
+    UUID getbookID() {return bookID;}
+    String getRentPerson() {return rentperson;}
+    String getRentDay() {return rentday;}
+    String getReturnday() {return returnday;}
 
 }

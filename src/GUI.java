@@ -6,6 +6,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -37,7 +39,7 @@ class titleUI extends JFrame {
     JMenuBar jmenubar;
     JMenu fileJMenu, rentJMenu, viewJMenu;
     JMenuItem Addbookitemofmenu, updatebookitemofmenu, deletebookitemofmenu,
-            rentbookitemofmenu, returnbookitemofmenu;
+            rentbookitemofmenu, returnbookitemofmenu, viewhistoryitemofmenu;
     JMenuItem viewallbookitemofmenu, viewrentbookitemofmenu, viewunrentedbookitemofmenu;
     JLabel Search;
     Choice Searchsection;
@@ -59,7 +61,7 @@ class titleUI extends JFrame {
         Books = FileInOut.File.fileRead.AllbookRead();
 
         for(int i = 0; i < FileInOut.File.fileRead.loaded; i++) {
-            String rented, RentPerson, Rentday, willReturnDay;
+            String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
             rentdata a = null;
 
             if(!Books.get(i).getRentID().equals("0")) {
@@ -68,15 +70,17 @@ class titleUI extends JFrame {
                 RentPerson = a.getRentPerson();
                 Rentday = a.getRentDay();
                 willReturnDay = a.getwillReturnday();
+                didntReturnday = Integer.toString(programinside.getDays.checkHowyouDidntReturn(a.getwillReturnday()));
             }
             else {
                 rented = "X";
                 RentPerson = " ";
                 Rentday = " ";
                 willReturnDay = " ";
+                didntReturnday = " ";
             }
             Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(), rented,
-                    RentPerson, Rentday, willReturnDay};
+                    RentPerson, Rentday, willReturnDay, didntReturnday};
             model.addRow(data);
         }
     }
@@ -88,7 +92,7 @@ class titleUI extends JFrame {
                 if((table.getValueAt(i, 1).toString().contains(Keyword))) {
                     res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
                             table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString(),
-                            table.getValueAt(i, 7).toString()});
+                            table.getValueAt(i, 7).toString(), table.getValueAt(i, 8).toString()});
                 }
             }
         }
@@ -105,15 +109,16 @@ class titleUI extends JFrame {
 
     static void seeunrentedbook() {
         model.setNumRows(0);
-        String rented, RentPerson, Rentday, willReturnDay;
+        String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
         for(int i = 0; i < FileInOut.File.fileRead.loaded; i++) {
             if(Books.get(i).getRentID().equals("0")) {
                 rented = "X";
                 RentPerson = " ";
                 Rentday = " ";
                 willReturnDay = " ";
+                didntReturnday = " ";
                 Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(), rented,
-                        RentPerson, Rentday, willReturnDay};
+                        RentPerson, Rentday, willReturnDay, didntReturnday};
                 model.addRow(data);
             }
         }
@@ -121,7 +126,7 @@ class titleUI extends JFrame {
 
     static void seerentedbook() throws IOException {
         model.setNumRows(0);
-        String rented, RentPerson, Rentday, willReturnDay;
+        String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
         rentdata a = null;
         for(int i = 0; i < FileInOut.File.fileRead.loaded; i++) {
             if(!Books.get(i).getRentID().equals("0")) {
@@ -130,13 +135,29 @@ class titleUI extends JFrame {
                 RentPerson = a.getRentPerson();
                 Rentday = a.getRentDay();
                 willReturnDay = a.getwillReturnday();
-                System.out.println(Integer.toString(i + 1) + Books.get(i).getBookname() + Books.get(i).getWriter() + Books.get(i).getCompany() + rented +
-                        RentPerson + Rentday + willReturnDay);
+                didntReturnday = Integer.toString(programinside.getDays.checkHowyouDidntReturn(a.getwillReturnday()));
                 Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(), rented,
-                        RentPerson, Rentday, willReturnDay};
+                        RentPerson, Rentday, willReturnDay, didntReturnday};
                 model.addRow(data);
             }
         }
+    }
+
+    static void returnthebook(Book a) throws IOException {
+        ArrayList<rentdata> rents = FileInOut.File.fileRead.AllrentdataRead();
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        historydata history;
+        for(int i = 0; i < rents.size(); i++) {
+            if(rents.get(i).getrentID().toString().equals(a.getRentID())) {
+                history = new historydata(rents.get(i).getbookID(), rents.get(i).getRentPerson(), rents.get(i).getRentDay(),
+                        programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
+                FileInOut.File.fileSave.addhistory(history);
+                rents.get(i).markrentID();
+                break;
+            }
+        }
+        FileInOut.File.fileSave.saveallrent(rents);
     }
 
     public void createComponents() {
@@ -149,6 +170,7 @@ class titleUI extends JFrame {
         viewallbookitemofmenu = new JMenuItem("모든 책 보기");
         viewrentbookitemofmenu = new JMenuItem("대여중인 책만 보기");
         viewunrentedbookitemofmenu = new JMenuItem("보유중인 책만 보기");
+        viewhistoryitemofmenu = new JMenuItem("모든 대여 내역 조회");
 
         Addbookitemofmenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
         updatebookitemofmenu.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, ActionEvent.CTRL_MASK));
@@ -164,6 +186,8 @@ class titleUI extends JFrame {
         rentJMenu = new JMenu("대여 관리");
         rentJMenu.add(rentbookitemofmenu);
         rentJMenu.add(returnbookitemofmenu);
+        rentJMenu.addSeparator();
+        rentJMenu.add(viewhistoryitemofmenu);
 
         viewJMenu = new JMenu("보기 옵션");
         viewJMenu.add(viewallbookitemofmenu);
@@ -175,7 +199,7 @@ class titleUI extends JFrame {
         jmenubar.add(rentJMenu);
         jmenubar.add(viewJMenu);
 
-        headings = new String[]{"번호", "도서명", "저자", "출판사", "대여 여부", "대여인", "대여 일자", "반납 일자"};
+        headings = new String[]{"번호", "도서명", "저자", "출판사", "대여 여부", "대여인", "대여 일자", "반납 일자", "연체일"};
         model = new DefaultTableModel(headings, 0) {
             public boolean isCellEditable(int rowIndex, int mCollndex) {
                 return false;
@@ -763,6 +787,33 @@ class returnbookUI extends JFrame {
         returnfinish.addActionListener(returnbookUIEventListener);
         cancel.addActionListener(returnbookUIEventListener);
         this.addWindowListener(returnbookUIEventListener);
+    }
+}
+
+class viewhistoryUI extends JFrame{
+
+    ArrayList<rentdata> rentdata;
+
+    public viewhistoryUI() {
+
+    }
+
+    public void createComponents() {
+
+    }
+
+    public void setFrame() {
+        setTitle("대여내역 조회");
+        this.setBackground(Color.white);
+        setLocation(100, 200);
+        setPreferredSize(new Dimension(1000, 500));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.pack();
+        setVisible(true);
+    }
+
+    public void ConnectEventListener() {
+
     }
 }
 

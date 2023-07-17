@@ -11,6 +11,7 @@ public class FileInOut {
 
 class fileRead {
     static int loaded;
+    static int rentloaded;
     private final String datafileName = "/Users/hanseol/data.txt";
     private final String historyfileName = "/Users/hanseol/history.txt";
     private final String rentfileName = "/Users/hanseol/rent.txt";
@@ -39,6 +40,27 @@ class fileRead {
                 res.add(new Book(UUID.fromString(rentid), UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken()
                         , token.nextToken()));
             }
+            loaded++;
+
+        }
+        this.sc = null;
+
+        return res;
+    }
+
+    ArrayList<rentdata> AllrentdataRead() throws FileNotFoundException {
+        ArrayList<rentdata> res = new ArrayList<rentdata>();
+        rentloaded = 0;
+
+
+        sc = new Scanner(new File(rentfileName));
+        String line, rentid;
+
+        while(sc.hasNextLine()) {
+            line = sc.nextLine();
+
+            StringTokenizer token = new StringTokenizer(line, "#");
+            res.add(new rentdata(UUID.fromString(token.nextToken()), UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken()));
             loaded++;
 
         }
@@ -106,7 +128,6 @@ class fileSave {
     void saveAllbooks(ArrayList<Book> Books) {
         try {
             OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt");
-            UUID id = UUID.randomUUID();
             byte[] by;
             byte[] sharp = "#".getBytes();
             for(int i = 0; i < Books.size(); i++) {
@@ -155,19 +176,44 @@ class fileSave {
 
     }
 
-    void addhistory(rentdata rent) throws IOException {
+    void saveallrent(ArrayList<rentdata> rents) throws IOException {
+        OutputStream dir = new FileOutputStream("/Users/hanseol/rent.txt");
+        byte[] by;
+        byte[] sharp = "#".getBytes();
+        for(int i = 0; i < rents.size(); i++) {
+
+            if(rents.get(i).getrentID() == null) continue;
+            by = rents.get(i).getrentID().toString().getBytes();
+            dir.write(by);
+            dir.write(sharp);
+            by = rents.get(i).getbookID().toString().getBytes();
+            dir.write(by);
+            dir.write(sharp);
+            by = rents.get(i).getRentPerson().getBytes();
+            dir.write(by);
+            dir.write(sharp);
+            by = rents.get(i).getRentDay().getBytes();
+            dir.write(by);
+            dir.write(sharp);
+            by = rents.get(i).getwillReturnday().getBytes();
+            dir.write(by);
+            dir.write("\n".getBytes());
+        }
+    }
+
+    void addhistory(historydata history) throws IOException {
         OutputStream dir = new FileOutputStream("/Users/hanseol/history.txt", true);
-        byte[] by = rent.getbookID().toString().getBytes();
+        byte[] by = history.getbookID().toString().getBytes();
         byte[] sharp = "#".getBytes();
         dir.write(by);
         dir.write(sharp);
-        by = rent.getRentPerson().getBytes();
+        by = history.getRentPerson().getBytes();
         dir.write(by);
         dir.write(sharp);
-        by = rent.getRentDay().getBytes();
+        by = history.getRentDay().getBytes();
         dir.write(by);
         dir.write(sharp);
-        by = rent.getwillReturnday().getBytes();
+        by = history.getReturnday().getBytes();
         dir.write(by);
         dir.write("\n".getBytes());
     }

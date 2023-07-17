@@ -92,6 +92,10 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
             System.out.println("보유중인 책만 보기");
             titleUI.seeunrentedbook();
         }
+        else if(actionJMenuItem.getText().equals("모든 대여 내역 조회")) {
+            System.out.println("모든 대여 내역 조회");
+            viewhistoryUI viewhistory = new viewhistoryUI();
+        }
     }
 
     @Override
@@ -325,7 +329,7 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
                             rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()), rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
                     programinside.getDays.gluecalender(rentbookUI.returnyear.getItem(rentbookUI.returnyear.getSelectedIndex()),
                             rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()), rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
-            rentbookUI.one.setRentID(newdata.getrentID().toString());
+            rentbookUI.one.setRentID(newdata.getrentID());
             try {
                 FileInOut.File.fileSave.addrent(newdata);
             } catch (IOException ex) {
@@ -389,6 +393,14 @@ class deletebookUIEventListener implements  ActionListener, WindowListener {
 
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton ActionJButton = (JButton)e.getSource();
+
+        if(ActionJButton.getText().equals("삭제")) {
+
+        }
+        else if (ActionJButton.getText().equals("취소")) {
+            this.deleteBookUI.dispose();
+        }
 
     }
 
@@ -442,6 +454,19 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
         JButton actionJButton = (JButton)e.getSource();
         if(actionJButton.getText().equals("반납")) {
             System.out.println("반납");
+            try {
+                titleUI.returnthebook(returnbookUI.one);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            returnbookUI.one.setRentID(null);
+            FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
+            try {
+                titleUI.reloadTable();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            this.returnbookUI.dispose();
         }
         else if(actionJButton.getText().equals("취소")) {
             System.out.println("취소");
