@@ -1,105 +1,93 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.Scanner;
+import java.util.*;
 
 public class FileInOut {
     static FileInOut File = new FileInOut();
     fileSave fileSave = new fileSave();
     fileRead fileRead = new fileRead();
+    Scanner sc = null;
 
 }
 
 class fileRead {
-    int pageloded;
-    ArrayList<Book> pageRead(int page, int howmany) throws IOException {
-        ArrayList<Book> Books = new ArrayList<Book>();
-        pageloded = 0;
-        Book newone;
-        int i = 0;
-        String fileName = "/Users/hanseol/HelloWorld/data.txt";
+    static int loaded;
+    private final String datafileName = "/Users/hanseol/data.txt";
+    private final String historyfileName = "/Users/hanseol/history.txt";
+    private Scanner sc;
 
-        try {
-            Scanner sc = new Scanner(new File(fileName));
-            while (sc.hasNextLine() && i < howmany) {
-                newone = new Book();
-                String line = sc.nextLine();
-                if ((page - 1) * howmany > 0) {
-                    page-= 1;
-                    continue;
-                }
 
-                StringTokenizer token = new StringTokenizer(line, "#");
-                newone.setBookinfo(token.nextToken(), token.nextToken(), token.nextToken());
+    ArrayList<Book> AllbookRead() throws FileNotFoundException {
+        ArrayList<Book> res = new ArrayList<Book>();
+        loaded = 0;
 
-                if(token.nextToken() == "1") {
-                    newone.rentthebook(token.nextToken(), token.nextToken(), token.nextToken());
-                }
-                else newone.returnthebook();
 
-                Books.add(newone);
+        sc = new Scanner(new File(datafileName));
+        String line, rentid;
 
-                i++; pageloded++;
+
+        while(sc.hasNextLine()) {
+            line = sc.nextLine();
+
+            StringTokenizer token = new StringTokenizer(line, "#");
+            rentid = token.nextToken();
+            if(rentid.equals("0")) {
+                res.add(new Book(null, UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken()
+                , token.nextToken()));
             }
+            else {
+                res.add(new Book(UUID.fromString(rentid), UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken()
+                        , token.nextToken()));
+            }
+            loaded++;
 
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        /*
-        File file = new File("/Users/hanseol/HelloWorld/data.txt");
-        BufferedReader br = new BufferedReader(new FileReader("/Users/hanseol/HelloWorld/data.txt"));
+        sc = null;
 
-        String str;
-        while((str = br.readLine()) != null && i < howmany) {
+        return res;
+    }
 
-            if ((page - 1) * howmany > 0) {
-                page-= 1;
-                continue;
-            }
 
-            StringTokenizer token = new StringTokenizer(str, "#");
-            newone.setBookinfo(token.nextToken(), token.nextToken(), token.nextToken());
-
-            if(token.nextToken() == "1") {
-                newone.rentthebook(token.nextToken(), token.nextToken(), token.nextToken());
-            }
-            else newone.returnthebook();
-
-            Books.add(newone);
-
-            i++; pageloded++;
+    rentdata checkthebookrent(ArrayList<Book> Books, UUID a) throws IOException{
+        if(this.sc == null) {
+            sc = new Scanner(new File(historyfileName));
         }
-        br.close();(*/
-        return (Books);
+        String line;
+        rentdata res;
+        line = sc.nextLine();
+        if(sc.hasNextLine()) {
+            if((res = checkthebookrent(Books, a)) != null) {
+                return res;
+            }
+        }
+        StringTokenizer token = new StringTokenizer(line, "#");
+        if(Objects.equals(a.toString(), token.nextToken())) {
+            res = new rentdata(a, UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken());
+            return res;
+        }
+        else return null;
+
+
     }
 }
 
 class fileSave {
     void addbook(Book newone) {
         try {
-            OutputStream dir = new FileOutputStream("/Users/hanseol/HelloWorld/data.txt", true);
-            byte[] by = newone.getBookname().getBytes();
+            OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt", true);
+            byte[] by = newone.getRentID().getBytes();
             byte[] sharp = "#".getBytes();
+            dir.write(by);
+            dir.write(sharp);
+            by = newone.getID().toString().getBytes();
+            dir.write(by);
+            dir.write(sharp);
+            by = newone.getBookname().getBytes();
             dir.write(by);
             dir.write(sharp);
             by = newone.getWriter().getBytes();
             dir.write(by);
             dir.write(sharp);
             by = newone.getCompany().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            if(newone.getdiditRent() == false)
-                by = "0".getBytes();
-            else by = "1".getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = newone.getRentname().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = newone.getRentday().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = newone.getReturnday().getBytes();
             dir.write(by);
             sharp = "\n".getBytes();
             dir.write(sharp);
@@ -108,5 +96,59 @@ class fileSave {
         catch (Exception e) {
             e.getStackTrace();
         }
+    }
+
+    void saveAllbooks(ArrayList<Book> Books) {
+        try {
+            OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt");
+            UUID id = UUID.randomUUID();
+            byte[] by;
+            byte[] sharp = "#".getBytes();
+            for(int i = 0; i < Books.size(); i++) {
+                by = Books.get(i).getRentID().toString().getBytes();
+                dir.write(by);
+                dir.write(sharp);
+                by = Books.get(i).getID().toString().getBytes();
+                dir.write(by);
+                dir.write(sharp);
+                by = Books.get(i).getBookname().getBytes();
+                dir.write(by);
+                dir.write(sharp);
+                by = Books.get(i).getWriter().getBytes();
+                dir.write(by);
+                dir.write(sharp);
+                by = Books.get(i).getCompany().getBytes();
+                dir.write(by);
+                dir.write("\n".getBytes());
+
+            }
+
+        }
+        catch (Exception e) {
+            e.getStackTrace();
+        }
+    }
+
+    void addhistory(rentdata rent) throws IOException{
+        OutputStream dir = new FileOutputStream("/Users/hanseol/history.txt", true);
+        UUID id = UUID.randomUUID();
+        byte[] by = rent.getrentID().toString().getBytes();
+        byte[] sharp = "#".getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getbookID().toString().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getRentPerson().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getRentDay().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getwillReturnday().getBytes();
+        dir.write(by);
+        dir.write("\n".getBytes());
+
+
     }
 }

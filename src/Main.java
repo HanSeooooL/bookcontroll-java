@@ -12,6 +12,8 @@ public class Main {
 
 
 
+
+
         GUI.program();
 
 
@@ -67,23 +69,27 @@ public class Main {
 }
 
 class Book{
-    private String id;
+    private UUID Bookid;
+    private UUID rentid;
     private String bookname;
     private String writer;
     private String company;
-    private Boolean rent;
-    private String rentname;
-    private String rentday;
-    private String willreturnday;
 
-    Book(String booknamee, String writerr, String companyy) {
+    Book(UUID rentID, UUID bookID, String booknamee, String writerr, String companyy) {
+        this.rentid = rentID;
+        this.Bookid = bookID;
         this.bookname = booknamee;
         this.writer = writerr;
         this.company = companyy;
-        this.rent = false;
-        this.rentname = "_";
-        this.rentday = "________";
-        this.willreturnday = "_________";
+
+    }
+
+    Book(String booknamee, String writerr, String companyy) {
+        Bookid = UUID.randomUUID();
+        rentid = null;
+        this.bookname = booknamee;
+        this.writer = writerr;
+        this.company = companyy;
 
     }
 
@@ -91,35 +97,37 @@ class Book{
         this.bookname = "bookname";
         this.writer = "writer";
         this.company = "company";
-        this.rent = false;
-        this.rentname = "_";
-        this.rentday = "________";
-        this.willreturnday = "_________";
     }
 
-    public void rentthebook(String rentname, String rentday, String returnday) {
-        this.rent = true;
-        this.rentname = rentname;
-        this.rentday = rentday;
-        this.willreturnday = returnday;
+    public void rentthebook(String rentname, String rentday, String returnday) throws IOException {
+        UUID rentid = UUID.randomUUID();
+        this.rentid = rentid;
+        rentdata newone = new rentdata(rentid, this.Bookid, rentname, rentday, returnday);
+        newone.print_rentdata();
+        //FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
+        FileInOut.File.fileSave.addhistory(newone);
+
+
     }
 
     public void returnthebook() {
-        this.rent = false;
-        this.rentname = "_";
-        this.rentday = "________";
-        this.willreturnday = "________";
     }
 
     void print_book() {
         System.out.println(this.bookname);
         System.out.println(this.writer);
         System.out.println(this.company);
-        if(this.rent) {
-            System.out.println(this.rentname);
-            System.out.println(this.rentday);
-            System.out.println(this.willreturnday);
+
+    }
+
+    UUID getID() {
+        return this.Bookid;
+    }
+    String getRentID() {
+        if (this.rentid != null) {
+        return this.rentid.toString();
         }
+    else return "0";
 
     }
     String getBookname() {
@@ -134,33 +142,8 @@ class Book{
         return this.company;
     }
 
-    Boolean getdiditRent() {
-        return this.rent;
-    }
-
-    String getRentname() {
-        if(this.rent) {
-            return this.rentname;
-        }
-        else {
-            return "_";
-        }
-    }
-
-    String getRentday() {
-        if(this.rent) {
-            return this.rentday;
-        }
-        else {
-            return "________";
-        }
-    }
-
-    String getReturnday() {
-        if(this.rent) {
-            return this.willreturnday;
-        }
-        else return "________";
+    void setID(String a) {
+        this.Bookid = UUID.fromString(a);
     }
 
     void setBookinfo(String bookname, String writer, String company) {
@@ -168,37 +151,31 @@ class Book{
         this.writer = writer;
         this.company = company;
     }
+}
 
+class rentdata {
+    private UUID bookID;
+    private UUID rentID;
+    private String rentperson;
+    private String rentday;
+    private String willreturnday;
 
-    void filesave() {
-        try {
-            OutputStream dir = new FileOutputStream("/Users/hanseol/HelloWorld/data.txt");
-            byte[] by = this.bookname.getBytes();
-            byte[] sharp = "#".getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = this.writer.getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = this.company.getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = new byte[]{(byte) (this.rent ? 1 : 0)};
-            dir.write(by);
-            dir.write(sharp);
-            by = this.rentname.getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = this.rentday.getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = this.willreturnday.getBytes();
-            dir.write(by);
-            sharp = "\n".getBytes();
-            dir.write(sharp);
-        }
-        catch (Exception e) {
-            e.getStackTrace();
-        }
+    rentdata(UUID rentID, UUID bookID, String rentperson, String rentday, String willreturnday) {
+        this.bookID = bookID;
+        this.rentID = rentID;
+        this.rentperson = rentperson;
+        this.rentday = rentday;
+        this.willreturnday = willreturnday;
     }
+
+    void print_rentdata() {
+        System.out.println(this.bookID + " " + this.rentID + " " + this.rentperson + " " + this.rentday + " " + this.willreturnday);
+    }
+
+    UUID getbookID() {return bookID;}
+    UUID getrentID() {return rentID;}
+    String getRentPerson() {return rentperson;}
+    String getRentDay() {return rentday;}
+    String getwillReturnday() {return willreturnday;}
+
 }

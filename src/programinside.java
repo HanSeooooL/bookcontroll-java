@@ -1,5 +1,6 @@
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
+import java.util.UUID;
 
 public class programinside {
     getDays getDays = new getDays();
@@ -47,6 +48,15 @@ class getDays {
         reslong = nowdayslong - returndayslong;
 
         res = Long.valueOf(reslong).intValue(); //Long to int
+
+        return res;
+    }
+
+    public String changenumbertochar(int year, int month, int day) {
+        String res;
+        res = Integer.toString(year);
+        res = res.concat(Integer.toString(month));
+        res = res.concat(Integer.toString(day));
 
         return res;
     }
