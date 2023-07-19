@@ -31,16 +31,6 @@ class fileRead {
         while(sc.hasNextLine()) {
             line = sc.nextLine();
 
-            StringTokenizer token = new StringTokenizer(line, "#");
-            rentid = token.nextToken();
-            if(rentid.equals("0")) {
-                res.add(new Book(token.nextToken(), token.nextToken(), token.nextToken()
-                , token.nextToken()));
-            }
-            else {
-                res.add(new Book(token.nextToken(), token.nextToken(), token.nextToken()
-                        , token.nextToken()));
-            }
             loaded++;
 
         }
@@ -57,14 +47,6 @@ class fileRead {
         sc = new Scanner(new File(rentfileName));
         String line, rentid;
 
-        while(sc.hasNextLine()) {
-            line = sc.nextLine();
-
-            StringTokenizer token = new StringTokenizer(line, "#");
-            res.add(new rentdata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
-            rentloaded++;
-
-        }
         this.sc = null;
 
         return res;
@@ -77,22 +59,13 @@ class fileRead {
 
         sc = new Scanner(new File(historyfileName));
         String line, rentid;
-
-        while(sc.hasNextLine()) {
-            line = sc.nextLine();
-
-            StringTokenizer token = new StringTokenizer(line, "#");
-            res.add(new historydata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
-            historyloaded++;
-
-        }
         this.sc = null;
 
         return res;
     }
 
 
-    rentdata checkthebookrent(UUID a) throws IOException{
+    rentdata checkthebookrent(String a) throws IOException{
         if(this.sc == null) {
             sc = new Scanner(new File(rentfileName));
         }
@@ -121,11 +94,12 @@ class fileRead {
 
 class fileSave {
     void addbook(Book newone) {
+        byte[] by;
+        byte[] sharp = "#".getBytes();
+
         try {
             OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt", true);
-            byte[] by;
-            byte[] sharp = "#".getBytes();
-            by = newone.getID().toString().getBytes();
+            by = newone.getID().getBytes();
             dir.write(by);
             dir.write(sharp);
             by = newone.getBookname().getBytes();
@@ -136,9 +110,7 @@ class fileSave {
             dir.write(sharp);
             by = newone.getCompany().getBytes();
             dir.write(by);
-            sharp = "\n".getBytes();
-            dir.write(sharp);
-
+            dir.write("\n".getBytes());
         }
         catch (Exception e) {
             e.getStackTrace();
@@ -146,13 +118,13 @@ class fileSave {
     }
 
     void saveAllbooks(ArrayList<Book> Books) {
+        byte[] by;
+        byte[] sharp = "#".getBytes();
+        OutputStream dir = null;
         try {
-            OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt");
-            byte[] by;
-            byte[] sharp = "#".getBytes();
-            for(int i = 0; i < Books.size(); i++) {
-                if(Books.get(i).getID() == null) continue;
-                by = Books.get(i).getID().toString().getBytes();
+            dir = new FileOutputStream("/Users/hanseol/data.txt");
+        for(int i = 0; i < Books.size(); i++) {
+                by = Books.get(i).getID().getBytes();
                 dir.write(by);
                 dir.write(sharp);
                 by = Books.get(i).getBookname().getBytes();
@@ -164,91 +136,26 @@ class fileSave {
                 by = Books.get(i).getCompany().getBytes();
                 dir.write(by);
                 dir.write("\n".getBytes());
-
             }
-
-        }
-        catch (Exception e) {
-            e.getStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     void addrent(rentdata rent) throws IOException{
         OutputStream dir = new FileOutputStream("/Users/hanseol/rent.txt", true);
-        byte[] by;
-        byte[] sharp = "#".getBytes();
-        by = rent.getbookID().toString().getBytes();
-        dir.write(by);
-        dir.write(sharp);
-        by = rent.getRentPerson().getBytes();
-        dir.write(by);
-        dir.write(sharp);
-        by = rent.getRentDay().getBytes();
-        dir.write(by);
-        dir.write(sharp);
-        by = rent.getwillReturnday().getBytes();
-        dir.write(by);
-        dir.write("\n".getBytes());
 
     }
 
     void saveallrent(ArrayList<rentdata> rents) throws IOException {
         OutputStream dir = new FileOutputStream("/Users/hanseol/rent.txt");
-        byte[] by;
-        byte[] sharp = "#".getBytes();
-        for(int i = 0; i < rents.size(); i++) {
-
-            by = rents.get(i).getbookID().toString().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = rents.get(i).getRentPerson().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = rents.get(i).getRentDay().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = rents.get(i).getwillReturnday().getBytes();
-            dir.write(by);
-            dir.write("\n".getBytes());
-        }
     }
 
     void saveallhistory(ArrayList<historydata> historys) throws IOException {
         OutputStream dir = new FileOutputStream("/Users/hanseol/history.txt");
-        byte[] by;
-        byte[] sharp = "#".getBytes();
-        for(int i = 0; i < historys.size(); i++) {
-
-            if(historys.get(i).getbookID() == null) continue;
-            by = historys.get(i).getbookID().toString().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = historys.get(i).getRentPerson().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = historys.get(i).getRentDay().getBytes();
-            dir.write(by);
-            dir.write(sharp);
-            by = historys.get(i).getReturnday().getBytes();
-            dir.write(by);
-            dir.write("\n".getBytes());
         }
-    }
 
     void addhistory(historydata history) throws IOException {
         OutputStream dir = new FileOutputStream("/Users/hanseol/history.txt", true);
-        byte[] by = history.getbookID().toString().getBytes();
-        byte[] sharp = "#".getBytes();
-        dir.write(by);
-        dir.write(sharp);
-        by = history.getRentPerson().getBytes();
-        dir.write(by);
-        dir.write(sharp);
-        by = history.getRentDay().getBytes();
-        dir.write(by);
-        dir.write(sharp);
-        by = history.getReturnday().getBytes();
-        dir.write(by);
-        dir.write("\n".getBytes());
     }
 }

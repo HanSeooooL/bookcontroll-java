@@ -66,13 +66,13 @@ class titleUI extends JFrame implements GUIbones{
         model.setNumRows(0);
         Books = FileInOut.File.fileRead.AllbookRead();
 
-        for(int i = 0; i < FileInOut.File.fileRead.loaded; i++) {
+        for(int i = 0; i < Books.size(); i++) {
             String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
             rentdata a = null;
 
-            if(!Books.get(i).getRentID().equals("0")) {
+            if(!(Books.get(i).getrent() == 0)) {
                 rented = "O";
-                a = FileInOut.File.fileRead.checkthebookrent(UUID.fromString(Books.get(i).getRentID()));
+                a = FileInOut.File.fileRead.checkthebookrent(Books.get(i).getID());
                 RentPerson = a.getRentPerson();
                 Rentday = a.getRentDay();
                 willReturnDay = a.getwillReturnday();
@@ -187,11 +187,11 @@ class titleUI extends JFrame implements GUIbones{
 
         historydata history;
         for(int i = 0; i < rents.size(); i++) {
-            if(rents.get(i).getrentID().toString().equals(a.getRentID())) {
+            if(rents.get(i).getbookID().equals(a.getID())) {
                 history = new historydata(rents.get(i).getbookID(), rents.get(i).getRentPerson(), rents.get(i).getRentDay(),
                         programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
                 FileInOut.File.fileSave.addhistory(history);
-                rents.get(i).markrentID();
+                rents.get(i).deletemark();
                 break;
             }
         }
@@ -202,8 +202,8 @@ class titleUI extends JFrame implements GUIbones{
         ArrayList<rentdata> rents = FileInOut.File.fileRead.AllrentdataRead();
         ArrayList<historydata> historys = FileInOut.File.fileRead.AllhistorydataRead();
         for (int i = 0; i < rents.size(); i++) {
-            if (rents.get(i).getrentID().toString().equals(a.getRentID())) {
-                rents.get(i).markrentID();
+            if (rents.get(i).getbookID().equals(a.getID())) {
+                rents.get(i).deletemark();
                 break;
             }
         }
@@ -332,6 +332,7 @@ class titleUI extends JFrame implements GUIbones{
 class addbookUI extends JFrame implements GUIbones{
     JTextField bookname, writer, company;
     JButton addfinish, cancel;
+    Choice genre;
 
     public addbookUI() {
         this.createComponents();
@@ -341,7 +342,7 @@ class addbookUI extends JFrame implements GUIbones{
     }
 
     public void createComponents() {
-        GridLayout grid = new GridLayout(3, 2);
+        GridLayout grid = new GridLayout(4, 2);
         grid.setVgap(5);
 
         JPanel insertlines = new JPanel();
@@ -351,6 +352,7 @@ class addbookUI extends JFrame implements GUIbones{
         bookname = new JTextField("");
         writer = new JTextField("");
         company = new JTextField("");
+        genre = new Choice();
 
         insertlines.add(new JLabel("        도서명"));
         insertlines.add(bookname);
@@ -358,8 +360,21 @@ class addbookUI extends JFrame implements GUIbones{
         insertlines.add(writer);
         insertlines.add(new JLabel("        출판사"));
         insertlines.add(company);
+        insertlines.add(new JLabel("        장르"));
+        insertlines.add(genre);;
         insertlines.setLayout(grid);
         insertlines.setSize(500, 100);
+
+        genre.add("총류");
+        genre.add("철학");
+        genre.add("종교");
+        genre.add("사회과학");
+        genre.add("자연과학");
+        genre.add("기술과학");
+        genre.add("예술");
+        genre.add("언어");
+        genre.add("문학");
+        genre.add("역사");
 
         choices.add(addfinish);
         choices.add(cancel);
@@ -467,11 +482,11 @@ class deleteBookUI extends JFrame implements GUIbones{
 
     public deleteBookUI(Book a) throws IOException {
         this.one = a;
-        if(!this.one.getRentID().equals("0")) {
-            rentdata = FileInOut.File.fileRead.checkthebookrent(UUID.fromString(one.getRentID()));
+        if(!this.one.getID().equals("0")) {
+            rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
         }
         else {
-            rentdata = new rentdata(null, this.one.getID(), " ", " ", " ");
+            rentdata = new rentdata(this.one.getID(), " ", " ", " ");
         }
         this.createComponents();
         this.setFrame();
@@ -730,7 +745,7 @@ class returnbookUI extends JFrame implements GUIbones{
     JButton returnfinish, cancel;
     public returnbookUI(Book a) throws IOException {
         this.one = a;
-        rentdata = FileInOut.File.fileRead.checkthebookrent(UUID.fromString(one.getRentID()));
+        rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
@@ -933,7 +948,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
         }
     }
 
-    static Book searchwithbookID(UUID bookID) {
+    static Book searchwithbookID(String bookID) {
         Book res = null;
         for(int i = 0; i < titleUI.Books.size(); i++) {
             if(titleUI.Books.get(i).getID().equals(bookID)) {

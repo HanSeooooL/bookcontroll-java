@@ -4,6 +4,8 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 
@@ -11,12 +13,13 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        //GUI.program();
+        GUI.program();
+        /*
         String bookgenre, bookname, year, code;
         char one[], res;
         int month;
 
-        code = new String();
+        code = "";
 
         System.out.println((int)'A');
 
@@ -48,6 +51,8 @@ public class Main {
         code = code.concat("01");
 
         System.out.println(code);
+
+         */
 
 
 
@@ -104,20 +109,39 @@ public class Main {
 }
 
 class Book{
+    private int rent;
     private String bookID;
     private String bookname;
     private String writer;
     private String company;
 
-    Book(String bookID, String booknamee, String writerr, String companyy) {
-        this.bookID = bookID;
+    Book(int genre, String booknamee, String writerr, String companyy) {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        char one[], res;
+        this.rent = 0;
         this.bookname = booknamee;
         this.writer = writerr;
         this.company = companyy;
+        one = this.bookname.toCharArray();
+        res = (char) (one[0] % 16);
+        res = (char) (res > 9 ? res + 65 : res + 48);
+        this.bookID = this.bookID.concat(Integer.toString(genre));
+        this.bookID = this.bookID.concat(Integer.toString(now.getYear()).substring(2));
+        if(now.getMonthValue() < 10) {
+            this.bookID = this.bookID.concat("0");
+            this.bookID = this.bookID.concat(Integer.toString(now.getMonthValue()));
+        } else {
+            this.bookID = this.bookID.concat(Integer.toString(now.getMonthValue()));
+        }
+        this.bookID = this.bookID.concat(Character.toString(res));
 
+        //이번 달에 몇개 추가했는지 카운트한 후 그에 맞는 숫자 000의 형태로 String을 반환하는 함수
+        //this.bookID = this.bookID.concat("01");
     }
 
-    Book(String booknamee, String writerr, String companyy) {
+
+    Book(int rent, int genre, String booknamee, String writerr, String companyy) {
+        this.rent = rent;
         bookID = new String("no");
         this.bookname = booknamee;
         this.writer = writerr;
@@ -157,6 +181,10 @@ class Book{
         this.bookID = a;
     }
 
+    int getrent() {
+        return this.rent;
+    }
+
     void setBookinfo(String bookname, String writer, String company) {
         this.bookname = bookname;
         this.writer = writer;
@@ -185,6 +213,8 @@ class rentdata {
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getwillReturnday() {return willreturnday;}
+
+    void deletemark() {this.bookID = "0";}
 
 }
 

@@ -2,6 +2,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.UUID;
 import javax.swing.*;
 
@@ -189,7 +192,7 @@ class addbookUIEventListener implements ActionListener, WindowListener {
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("등록")) {
-            Book newone = new Book(addbookUI.bookname.getText(), addbookUI.writer.getText(), addbookUI.company.getText());
+            Book newone = new Book(addbookUI.genre.getSelectedIndex(), addbookUI.bookname.getText(), addbookUI.writer.getText(), addbookUI.company.getText());
             FileInOut.File.fileSave.addbook(newone);
             try {
                 titleUI.reloadTable();
@@ -322,7 +325,6 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
                             rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()), rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
                     programinside.getDays.gluecalender(rentbookUI.returnyear.getItem(rentbookUI.returnyear.getSelectedIndex()),
                             rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()), rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
-            rentbookUI.one.setRentID(newdata.getrentID());
             try {
                 FileInOut.File.fileSave.addrent(newdata);
             } catch (IOException ex) {
@@ -455,8 +457,6 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            returnbookUI.one.setRentID(null);
-            FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
             try {
                 titleUI.reloadTable();
             } catch (IOException ex) {
