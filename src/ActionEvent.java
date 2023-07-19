@@ -459,6 +459,7 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
         JButton actionJButton = (JButton)e.getSource();
         if(actionJButton.getText().equals("반납")) {
             System.out.println("반납");
+            returnfinish returnfinish = new returnfinish(this.returnbookUI.rentdata);
             try {
                 titleUI.returnthebook(returnbookUI.one);
             } catch (IOException ex) {
@@ -528,6 +529,9 @@ class viewhistorySearchEventListener implements  ActionListener {
         if(actionJButton.getText().equals("검색")) {
             viewhistoryUI.SearchTable(viewhistoryUI.Searchsection.getSelectedIndex(), viewhistoryUI.SearchKeyword.getText());
         }
+        else if(actionJButton.getText().equals("나가기")) {
+            this.viewhistoryUI.dispose();
+        }
     }
 }
 
@@ -560,6 +564,59 @@ class deletewarningUIEventListener implements ActionListener, WindowListener{
         }
         else if(actionJButton.getText().equals("취소")) {
             this.deletewarningUI.dispose();
+        }
+
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+}
+
+class returnfinishUIEventListener implements ActionListener, WindowListener {
+
+    returnfinish returnfinish;
+
+    public returnfinishUIEventListener(returnfinish returnfinish) {
+        this.returnfinish = returnfinish;
+    }
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
+        JButton actionJButton = (JButton)e.getSource();
+        if(actionJButton.getText().equals("확인")) {
+            this.returnfinish.dispose();
         }
 
     }

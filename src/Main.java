@@ -96,20 +96,6 @@ class Book{
         this.company = "company";
     }
 
-    public void rentthebook(String rentname, String rentday, String returnday) throws IOException {
-        UUID rentid = UUID.randomUUID();
-        this.rentid = rentid;
-        rentdata newone = new rentdata(rentid, this.Bookid, rentname, rentday, returnday);
-        newone.print_rentdata();
-        //FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
-        FileInOut.File.fileSave.addrent(newone);
-
-
-    }
-
-    public void returnthebook() {
-    }
-
     void print_book() {
         System.out.println(this.bookname);
         System.out.println(this.writer);
@@ -206,7 +192,6 @@ class historydata {
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getReturnday() {return returnday;}
-
     void markbookID() {this.bookID = null;}
 
 }

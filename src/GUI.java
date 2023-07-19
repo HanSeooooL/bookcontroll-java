@@ -6,8 +6,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -844,7 +842,7 @@ class viewhistoryUI extends JFrame{
     static JTable table;
     JLabel Search;
     Choice Searchsection;
-    JButton Searchstart;
+    JButton Searchstart, exit;
     JTextField SearchKeyword;
     String[] headings;
     JScrollPane jScrollPane;
@@ -887,6 +885,27 @@ class viewhistoryUI extends JFrame{
         for (int i = 0; i < table.getRowCount(); i++) {
             if (section == 0)  {    //도서명 검색
                 if((table.getValueAt(i, 1).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
+                            table.getValueAt(i, 6).toString()});
+                }
+            }
+            else if(section == 1) {
+                if((table.getValueAt(i, 2).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
+                            table.getValueAt(i, 6).toString()});
+                }
+            }
+            else if (section == 2) {
+                if((table.getValueAt(i, 3).toString().contains(Keyword))) {
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
+                            table.getValueAt(i, 6).toString()});
+                }
+            }
+            else if (section == 3) {
+                if((table.getValueAt(i, 4).toString().contains(Keyword))) {
                     res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
                             table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
                             table.getValueAt(i, 6).toString()});
@@ -937,6 +956,7 @@ class viewhistoryUI extends JFrame{
         Searchsection.setLocation(10, 400);
 
         Searchstart = new JButton("검색");
+        exit = new JButton("나가기");
 
         SearchKeyword = new JTextField("");
         SearchKeyword.setPreferredSize(new Dimension(200, 20));
@@ -947,6 +967,7 @@ class viewhistoryUI extends JFrame{
         SearchPanel.add(Searchsection);
         SearchPanel.add(SearchKeyword);
         SearchPanel.add(Searchstart);
+        SearchPanel.add(exit);
 
         JScrollPane jScrollPane = new JScrollPane(table);
 
@@ -969,6 +990,7 @@ class viewhistoryUI extends JFrame{
     public void ConnectEventListener() {
         viewhistorySearchEventListener viewhistorySearchEventListener = new viewhistorySearchEventListener(this);
         Searchstart.addActionListener(viewhistorySearchEventListener);
+        exit.addActionListener(viewhistorySearchEventListener);
 
     }
 }
@@ -1021,6 +1043,56 @@ class deletewarningUI extends JFrame {
         cancel.addActionListener(deletewarningUIEventListener);
         this.addWindowListener(deletewarningUIEventListener);
 
+    }
+}
+
+class returnfinish extends JFrame {
+    rentdata rentdata;
+
+    String msg;
+    JLabel message;
+    JButton accept;
+    JPanel buttonspace;
+
+    public returnfinish(rentdata one) {
+        this.rentdata = one;
+        this.createComponents();
+        this.setFrame();
+        this.ConnectEventListener();
+
+    }
+
+    public void createComponents() {
+        String day = Integer.toString(programinside.getDays.checkHowyouDidntReturn(rentdata.getwillReturnday()));
+        msg = new String("연체일: ");
+        msg = msg.concat(day);
+        this.message = new JLabel(msg);
+        this.message.setHorizontalAlignment(JLabel.CENTER);
+
+        this.accept = new JButton("확인");
+
+        this.buttonspace = new JPanel();
+        this.buttonspace.add(this.accept);
+
+        Container c = getContentPane();
+        GridLayout grid = new GridLayout(2, 1);
+        c.setLayout(grid);
+        c.add(this.message);
+        c.add(this.buttonspace);
+    }
+
+    public void setFrame() {
+        this.setTitle("반납 완료");
+        this.setBackground(Color.white);
+        this.setPreferredSize(new Dimension(400, 150));
+        this.pack();
+        this.setVisible(true);
+    }
+
+    public void ConnectEventListener() {
+        returnfinishUIEventListener returnfinishUIEventListener = new returnfinishUIEventListener(this);
+        accept.addActionListener(returnfinishUIEventListener);
+        this.addWindowListener(returnfinishUIEventListener);
     }
 }
 
