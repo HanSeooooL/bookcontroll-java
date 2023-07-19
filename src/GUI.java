@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.TableView;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ class titleUI extends JFrame {
     //static ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
     static ArrayList<Book> Books;
     static JTable table;
+    static TableRowSorter<DefaultTableModel> sorter;
     JPanel SearchPanel;
     JMenuBar jmenubar;
     JMenu fileJMenu, rentJMenu, viewJMenu;
@@ -126,7 +128,23 @@ class titleUI extends JFrame {
         return Books.get(i - 1);
     }
 
+    static void seeallbook() {
+        table.setRowSorter(null);
+    }
+
     static void seeunrentedbook() {
+        sorter = new TableRowSorter<DefaultTableModel>(model);
+        RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+            @Override
+            public boolean include(Entry<?, ?> entry) {
+                String population = (String) entry.getValue(4);
+                return population.equals("X");
+            }
+        };
+        table.setRowSorter(sorter);
+        sorter.setRowFilter(filter);
+
+        /*
         model.setNumRows(0);
         String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
         for(int i = 0; i < FileInOut.File.fileRead.loaded; i++) {
@@ -141,25 +159,20 @@ class titleUI extends JFrame {
                 model.addRow(data);
             }
         }
+         */
     }
 
-    static void seerentedbook() throws IOException {
-        model.setNumRows(0);
-        String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
-        rentdata a = null;
-        for(int i = 0; i < FileInOut.File.fileRead.loaded; i++) {
-            if(!Books.get(i).getRentID().equals("0")) {
-                rented = "O";
-                a = FileInOut.File.fileRead.checkthebookrent(UUID.fromString(Books.get(i).getRentID()));
-                RentPerson = a.getRentPerson();
-                Rentday = a.getRentDay();
-                willReturnDay = a.getwillReturnday();
-                didntReturnday = Integer.toString(programinside.getDays.checkHowyouDidntReturn(a.getwillReturnday()));
-                Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(), rented,
-                        RentPerson, Rentday, willReturnDay, didntReturnday};
-                model.addRow(data);
+    static void seerentedbook() {
+        sorter = new TableRowSorter<DefaultTableModel>(model);
+        RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+            @Override
+            public boolean include(Entry<?, ?> entry) {
+                String population = (String) entry.getValue(4);
+                return population.equals("O");
             }
-        }
+        };
+        table.setRowSorter(sorter);
+        sorter.setRowFilter(filter);
     }
 
     static void returnthebook(Book a) throws IOException {
@@ -250,8 +263,6 @@ class titleUI extends JFrame {
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
         table.setAutoCreateRowSorter(true);
-        TableRowSorter sorter = new TableRowSorter(table.getModel());
-        table.setRowSorter(sorter);
 
         Search = new JLabel("검색:");
 
@@ -836,9 +847,7 @@ class viewhistoryUI extends JFrame{
 
     static ArrayList<rentdata> rentdata;
     static ArrayList<historydata> historydata;
-
     JPanel SearchPanel;
-
     static JTable table;
     JLabel Search;
     Choice Searchsection;
@@ -969,7 +978,7 @@ class viewhistoryUI extends JFrame{
         SearchPanel.add(Searchstart);
         SearchPanel.add(exit);
 
-        JScrollPane jScrollPane = new JScrollPane(table);
+        jScrollPane = new JScrollPane(table);
 
         Container c = getContentPane();
         c.setLayout(new BorderLayout());

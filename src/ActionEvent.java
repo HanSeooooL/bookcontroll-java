@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.UUID;
 import javax.swing.*;
 
-public class ActionEvent{
-
-}
+public class ActionEvent{ }
 
 class titleJMenuEventListener implements ActionListener, WindowListener {
     titleUI titleUI;
@@ -73,20 +71,11 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
         }
         else if(actionJMenuItem.getText().equals("모든 책 보기")) {
             System.out.println("모든 책 보기");
-            titleUI.model.setNumRows(0);
-            try {
-                titleUI.reloadTable();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            titleUI.seeallbook();
         }
         else if(actionJMenuItem.getText().equals("대여중인 책만 보기")) {
             System.out.println("대여중인 책만 보기");
-            try {
-                titleUI.seerentedbook();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            titleUI.seerentedbook();
         }
         else if(actionJMenuItem.getText().equals("보유중인 책만 보기")) {
             System.out.println("보유중인 책만 보기");
@@ -387,6 +376,7 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
 
     }
 }
+
 class deletebookUIEventListener implements  ActionListener, WindowListener {
 
     deleteBookUI deleteBookUI;

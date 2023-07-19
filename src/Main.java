@@ -9,11 +9,6 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-
-
-
-
-
         GUI.program();
 
         //titleUI title = new titleUI();
@@ -24,9 +19,6 @@ public class Main {
         for (int i = 0; i < Books.size(); i++) {
             Books.get(0).print_book();
         }*/
-
-
-
 
         /*HashMap<String, Book> map = new HashMap<String, Book>();
 
