@@ -13,6 +13,12 @@ import java.util.UUID;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 
+interface GUIbones {
+    void createComponents();
+    void setFrame();
+    void ConnectEventListener();
+}
+
 public class GUI {
 
     static titleUI titleUI;
@@ -30,7 +36,7 @@ public class GUI {
     }*/
 }
 
-class titleUI extends JFrame {
+class titleUI extends JFrame implements GUIbones{
     //static ArrayList<bookinfo> bookinfos = new ArrayList<bookinfo>();
     static ArrayList<Book> Books;
     static JTable table;
@@ -51,7 +57,7 @@ class titleUI extends JFrame {
     public titleUI() throws IOException {
         this.createComponents();
         this.setFrame();
-        this.connectEventListener();
+        this.ConnectEventListener();
 
         reloadTable();
     }
@@ -118,8 +124,8 @@ class titleUI extends JFrame {
             }
         }
         model.setNumRows(0);
-        for(int i = 0; i < res.size(); i++) {
-            model.addRow(res.get(i));
+        for (Object[] re : res) {
+            model.addRow(re);
         }
     }
 
@@ -303,7 +309,7 @@ class titleUI extends JFrame {
         setVisible(true);
     }
 
-    public void connectEventListener() {
+    public void ConnectEventListener() {
         titleJMenuEventListener titleJMenuEventListener = new titleJMenuEventListener(this);
         Addbookitemofmenu.addActionListener(titleJMenuEventListener);
         updatebookitemofmenu.addActionListener(titleJMenuEventListener);
@@ -323,14 +329,14 @@ class titleUI extends JFrame {
     }
 }
 
-class addbookUI extends JFrame {
+class addbookUI extends JFrame implements GUIbones{
     JTextField bookname, writer, company;
     JButton addfinish, cancel;
 
     public addbookUI() {
         this.createComponents();
         this.setFrame();
-        this.connectEventListener();
+        this.ConnectEventListener();
 
     }
 
@@ -378,7 +384,7 @@ class addbookUI extends JFrame {
         setVisible(true);
     }
 
-    public void connectEventListener() {
+    public void ConnectEventListener() {
         addbookUIEventListener addbookUIEventListener = new addbookUIEventListener(this);
         addfinish.addActionListener(addbookUIEventListener);
         cancel.addActionListener(addbookUIEventListener);
@@ -386,7 +392,7 @@ class addbookUI extends JFrame {
     }
 }
 
-class updatebookUI extends JFrame{
+class updatebookUI extends JFrame implements GUIbones{
 
     Book one;
     JTextField bookname, writer, company;
@@ -450,7 +456,7 @@ class updatebookUI extends JFrame{
     }
 }
 
-class deleteBookUI extends JFrame{
+class deleteBookUI extends JFrame implements GUIbones{
     Book one;
 
     rentdata rentdata;
@@ -575,7 +581,7 @@ class deleteBookUI extends JFrame{
     }
 }
 
-class rentbookUI extends JFrame {
+class rentbookUI extends JFrame implements GUIbones{
     Book one;
 
     JButton rentfinish, cancel;
@@ -714,7 +720,7 @@ class rentbookUI extends JFrame {
     }
 }
 
-class returnbookUI extends JFrame {
+class returnbookUI extends JFrame implements GUIbones{
 
     Book one;
     rentdata rentdata;
@@ -843,7 +849,7 @@ class returnbookUI extends JFrame {
     }
 }
 
-class viewhistoryUI extends JFrame{
+class viewhistoryUI extends JFrame implements GUIbones{
 
     static ArrayList<rentdata> rentdata;
     static ArrayList<historydata> historydata;
@@ -1004,7 +1010,7 @@ class viewhistoryUI extends JFrame{
     }
 }
 
-class deletewarningUI extends JFrame {
+class deletewarningUI extends JFrame implements GUIbones{
 
     deleteBookUI deleteBookUI;
     String msg;
@@ -1055,7 +1061,7 @@ class deletewarningUI extends JFrame {
     }
 }
 
-class returnfinish extends JFrame {
+class returnfinish extends JFrame implements GUIbones{
     rentdata rentdata;
 
     String msg;
@@ -1105,7 +1111,7 @@ class returnfinish extends JFrame {
     }
 }
 
-class errorUI extends JFrame {
+class errorUI extends JFrame implements GUIbones{
     String msg;
     JLabel message;
     JButton accept;

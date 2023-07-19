@@ -34,11 +34,11 @@ class fileRead {
             StringTokenizer token = new StringTokenizer(line, "#");
             rentid = token.nextToken();
             if(rentid.equals("0")) {
-                res.add(new Book(null, UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken()
+                res.add(new Book(token.nextToken(), token.nextToken(), token.nextToken()
                 , token.nextToken()));
             }
             else {
-                res.add(new Book(UUID.fromString(rentid), UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken()
+                res.add(new Book(token.nextToken(), token.nextToken(), token.nextToken()
                         , token.nextToken()));
             }
             loaded++;
@@ -61,7 +61,7 @@ class fileRead {
             line = sc.nextLine();
 
             StringTokenizer token = new StringTokenizer(line, "#");
-            res.add(new rentdata(UUID.fromString(token.nextToken()), UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken()));
+            res.add(new rentdata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
             rentloaded++;
 
         }
@@ -82,7 +82,7 @@ class fileRead {
             line = sc.nextLine();
 
             StringTokenizer token = new StringTokenizer(line, "#");
-            res.add(new historydata(UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken()));
+            res.add(new historydata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
             historyloaded++;
 
         }
@@ -106,7 +106,7 @@ class fileRead {
         }
         StringTokenizer token = new StringTokenizer(line, "#");
         if(Objects.equals(a.toString(), token.nextToken())) {
-            res = new rentdata(a, UUID.fromString(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken());
+            res = new rentdata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken());
             this.sc = null;
             return res;
         }
@@ -123,10 +123,8 @@ class fileSave {
     void addbook(Book newone) {
         try {
             OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt", true);
-            byte[] by = newone.getRentID().getBytes();
+            byte[] by;
             byte[] sharp = "#".getBytes();
-            dir.write(by);
-            dir.write(sharp);
             by = newone.getID().toString().getBytes();
             dir.write(by);
             dir.write(sharp);
@@ -154,9 +152,6 @@ class fileSave {
             byte[] sharp = "#".getBytes();
             for(int i = 0; i < Books.size(); i++) {
                 if(Books.get(i).getID() == null) continue;
-                by = Books.get(i).getRentID().toString().getBytes();
-                dir.write(by);
-                dir.write(sharp);
                 by = Books.get(i).getID().toString().getBytes();
                 dir.write(by);
                 dir.write(sharp);
@@ -180,10 +175,8 @@ class fileSave {
 
     void addrent(rentdata rent) throws IOException{
         OutputStream dir = new FileOutputStream("/Users/hanseol/rent.txt", true);
-        byte[] by = rent.getrentID().toString().getBytes();
+        byte[] by;
         byte[] sharp = "#".getBytes();
-        dir.write(by);
-        dir.write(sharp);
         by = rent.getbookID().toString().getBytes();
         dir.write(by);
         dir.write(sharp);
@@ -205,10 +198,6 @@ class fileSave {
         byte[] sharp = "#".getBytes();
         for(int i = 0; i < rents.size(); i++) {
 
-            if(rents.get(i).getrentID() == null) continue;
-            by = rents.get(i).getrentID().toString().getBytes();
-            dir.write(by);
-            dir.write(sharp);
             by = rents.get(i).getbookID().toString().getBytes();
             dir.write(by);
             dir.write(sharp);

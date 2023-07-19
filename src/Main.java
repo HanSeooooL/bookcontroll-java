@@ -6,10 +6,56 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 
+
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        GUI.program();
+        //GUI.program();
+        String bookgenre, bookname, year, code;
+        char one[], res;
+        int month;
+
+        code = new String();
+
+        System.out.println((int)'A');
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("주류: ");
+        bookgenre = sc.next();
+        System.out.print("연도: ");
+        year = sc.next();
+        System.out.print("월: ");
+        month = sc.nextInt();
+        System.out.print("책 이름: ");
+        bookname = sc.next();
+
+        one = bookname.toCharArray();
+        System.out.println((int)one[0]);
+        res = (char) (one[0] % 16);
+        res = (char) (res > 9 ? res + 65 : res + 48);
+
+
+        code = code.concat(bookgenre);
+        code = code.concat(year.substring(2));
+        if(month < 10) {
+            code = code.concat("0");
+            code = code.concat(Integer.toString(month));
+        } else {
+            code = code.concat(Integer.toString(month));
+        }
+        code = code.concat(Character.toString(res));
+        code = code.concat("01");
+
+        System.out.println(code);
+
+
+
+
+
+
+
+
 
         //titleUI title = new titleUI();
         /*FileInOut file = new FileInOut();
@@ -58,15 +104,13 @@ public class Main {
 }
 
 class Book{
-    private UUID Bookid;
-    private UUID rentid;
+    private String bookID;
     private String bookname;
     private String writer;
     private String company;
 
-    Book(UUID rentID, UUID bookID, String booknamee, String writerr, String companyy) {
-        this.rentid = rentID;
-        this.Bookid = bookID;
+    Book(String bookID, String booknamee, String writerr, String companyy) {
+        this.bookID = bookID;
         this.bookname = booknamee;
         this.writer = writerr;
         this.company = companyy;
@@ -74,8 +118,7 @@ class Book{
     }
 
     Book(String booknamee, String writerr, String companyy) {
-        Bookid = UUID.randomUUID();
-        rentid = null;
+        bookID = new String("no");
         this.bookname = booknamee;
         this.writer = writerr;
         this.company = companyy;
@@ -89,22 +132,14 @@ class Book{
     }
 
     void print_book() {
+        System.out.println(this.bookID);
         System.out.println(this.bookname);
         System.out.println(this.writer);
         System.out.println(this.company);
-        System.out.println(this.rentid);
-
     }
 
-    UUID getID() {
-        return this.Bookid;
-    }
-    String getRentID() {
-        if (this.rentid != null) {
-        return this.rentid.toString();
-        }
-    else return "0";
-
+    String getID() {
+        return this.bookID;
     }
     String getBookname() {
         return this.bookname;
@@ -118,10 +153,9 @@ class Book{
         return this.company;
     }
 
-    void setID(UUID a) {
-        this.Bookid = a;
+    void setID(String a) {
+        this.bookID = a;
     }
-    void setRentID(UUID a) {this.rentid = a;}
 
     void setBookinfo(String bookname, String writer, String company) {
         this.bookname = bookname;
@@ -131,22 +165,12 @@ class Book{
 }
 
 class rentdata {
-    private UUID bookID;
-    private UUID rentID;
+    private String bookID;
     private String rentperson;
     private String rentday;
     private String willreturnday;
 
-    rentdata(UUID rentID, UUID bookID, String rentperson, String rentday, String willreturnday) {
-        this.bookID = bookID;
-        this.rentID = rentID;
-        this.rentperson = rentperson;
-        this.rentday = rentday;
-        this.willreturnday = willreturnday;
-    }
-
-    rentdata(UUID bookID, String rentperson, String rentday, String willreturnday) {
-        this.rentID = UUID.randomUUID();
+    rentdata(String bookID, String rentperson, String rentday, String willreturnday) {
         this.bookID = bookID;
         this.rentperson = rentperson;
         this.rentday = rentday;
@@ -154,33 +178,29 @@ class rentdata {
     }
 
     void print_rentdata() {
-        System.out.println(this.bookID + " " + this.rentID + " " + this.rentperson + " " + this.rentday + " " + this.willreturnday);
+        System.out.println(this.bookID + " " + this.rentperson + " " + this.rentday + " " + this.willreturnday);
     }
 
-    UUID getbookID() {return bookID;}
-    UUID getrentID() {return rentID;}
+    String getbookID() {return bookID;}
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getwillReturnday() {return willreturnday;}
-    void markrentID() {
-        this.rentID = null;
-    }
 
 }
 
 class historydata {
-    private UUID bookID;
+    private String bookID;
     private String rentperson;
     private String rentday;
     private String returnday;
 
-    historydata(UUID bookId, String rentperson, String rentday, String returnday) {
+    historydata(String bookId, String rentperson, String rentday, String returnday) {
         this.bookID = bookId;
         this.rentperson = rentperson;
         this.rentday = rentday;
         this.returnday = returnday;
     }
-    UUID getbookID() {return bookID;}
+    String getbookID() {return bookID;}
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getReturnday() {return returnday;}
