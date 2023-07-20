@@ -23,13 +23,14 @@ class fileRead {
         ArrayList<Book> res = new ArrayList<Book>();
         loaded = 0;
 
-
         sc = new Scanner(new File(datafileName));
-        String line, rentid;
-
+        StringTokenizer token;
+        String line;
 
         while(sc.hasNextLine()) {
             line = sc.nextLine();
+            token = new StringTokenizer(line, "#");
+            res.add(new Book(Integer.parseInt(token.nextToken()), token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
 
             loaded++;
 
@@ -69,7 +70,7 @@ class fileRead {
         if(this.sc == null) {
             sc = new Scanner(new File(rentfileName));
         }
-        String line;
+        String line, bookID;
         rentdata res;
         line = sc.nextLine();
         if(sc.hasNextLine()) {
@@ -78,8 +79,9 @@ class fileRead {
             }
         }
         StringTokenizer token = new StringTokenizer(line, "#");
-        if(Objects.equals(a.toString(), token.nextToken())) {
-            res = new rentdata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken());
+        bookID = token.nextToken();
+        if(Objects.equals(a.toString(), bookID)) {
+            res = new rentdata(bookID, token.nextToken(), token.nextToken(), token.nextToken());
             this.sc = null;
             return res;
         }
@@ -99,6 +101,9 @@ class fileSave {
 
         try {
             OutputStream dir = new FileOutputStream("/Users/hanseol/data.txt", true);
+            by = Integer.toString(newone.getrent()).getBytes();
+            dir.write(by);
+            dir.write(sharp);
             by = newone.getID().getBytes();
             dir.write(by);
             dir.write(sharp);
@@ -124,6 +129,9 @@ class fileSave {
         try {
             dir = new FileOutputStream("/Users/hanseol/data.txt");
         for(int i = 0; i < Books.size(); i++) {
+                by = Integer.toString(Books.get(i).getrent()).getBytes();
+                dir.write(by);
+                dir.write(sharp);
                 by = Books.get(i).getID().getBytes();
                 dir.write(by);
                 dir.write(sharp);
@@ -144,7 +152,20 @@ class fileSave {
 
     void addrent(rentdata rent) throws IOException{
         OutputStream dir = new FileOutputStream("/Users/hanseol/rent.txt", true);
-
+        byte[] by;
+        byte[] sharp = "#".getBytes();
+        by = rent.getbookID().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getRentPerson().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getRentDay().getBytes();
+        dir.write(by);
+        dir.write(sharp);
+        by = rent.getwillReturnday().getBytes();
+        dir.write(by);
+        dir.write("\n".getBytes());
     }
 
     void saveallrent(ArrayList<rentdata> rents) throws IOException {

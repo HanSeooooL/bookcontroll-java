@@ -330,6 +330,7 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            rentbookUI.one.switchrent();
             FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
             try {
                 titleUI.reloadTable();

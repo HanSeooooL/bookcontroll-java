@@ -125,6 +125,7 @@ class Book{
         one = this.bookname.toCharArray();
         res = (char) (one[0] % 16);
         res = (char) (res > 9 ? res + 65 : res + 48);
+        this.bookID = "";
         this.bookID = this.bookID.concat(Integer.toString(genre));
         this.bookID = this.bookID.concat(Integer.toString(now.getYear()).substring(2));
         if(now.getMonthValue() < 10) {
@@ -140,9 +141,10 @@ class Book{
     }
 
 
-    Book(int rent, int genre, String booknamee, String writerr, String companyy) {
+    Book(int rent, String bookID, String booknamee, String writerr, String companyy) {
+
         this.rent = rent;
-        bookID = new String("no");
+        this.bookID = bookID;
         this.bookname = booknamee;
         this.writer = writerr;
         this.company = companyy;
@@ -189,6 +191,11 @@ class Book{
         this.bookname = bookname;
         this.writer = writer;
         this.company = company;
+    }
+
+    void switchrent() {
+        if(this.rent == 0) this.rent = 1;
+        else this.rent = 0;
     }
 }
 
