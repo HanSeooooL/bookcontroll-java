@@ -13,7 +13,9 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
+
         GUI.program();
+
         /*
         String bookgenre, bookname, year, code;
         char one[], res;
@@ -117,16 +119,12 @@ class Book{
 
     Book(int genre, String booknamee, String writerr, String companyy) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        char one[], res;
+        String lastitemcode;
+        this.bookID = "";
         this.rent = 0;
         this.bookname = booknamee;
         this.writer = writerr;
         this.company = companyy;
-        one = this.bookname.toCharArray();
-        res = (char) (one[0] % 16);
-        res = (char) (res > 9 ? res + 65 : res + 48);
-        this.bookID = "";
-        this.bookID = this.bookID.concat(Integer.toString(genre));
         this.bookID = this.bookID.concat(Integer.toString(now.getYear()).substring(2));
         if(now.getMonthValue() < 10) {
             this.bookID = this.bookID.concat("0");
@@ -134,10 +132,32 @@ class Book{
         } else {
             this.bookID = this.bookID.concat(Integer.toString(now.getMonthValue()));
         }
-        this.bookID = this.bookID.concat(Character.toString(res));
+        if(titleUI.Books == null) {
+            this.bookID = this.bookID.concat("001");
 
-        //이번 달에 몇개 추가했는지 카운트한 후 그에 맞는 숫자 000의 형태로 String을 반환하는 함수
-        //this.bookID = this.bookID.concat("01");
+        }
+        else {
+        lastitemcode = titleUI.Books.get(titleUI.Books.size() - 1).getID();
+        if(lastitemcode.substring(0, 2).equals(this.bookID.substring(0, 2))) {
+            if(lastitemcode.substring(2, 4).equals(this.bookID.substring(2, 4))) {
+                if(Integer.parseInt(lastitemcode.substring(4, 7)) < 9) {
+                    this.bookID = this.bookID.concat("0");
+                    this.bookID = this.bookID.concat("0");
+                    this.bookID = this.bookID.concat(Integer.toString(Integer.parseInt(lastitemcode.substring(4, 7)) + 1));
+                }
+                else if (Integer.parseInt(lastitemcode.substring(4, 7)) < 99) {
+                    this.bookID = this.bookID.concat("0");
+                    this.bookID = this.bookID.concat(Integer.toString(Integer.parseInt(lastitemcode.substring(4, 7)) + 1));
+                }
+                else if (Integer.parseInt(lastitemcode.substring(4, 7)) < 999) {
+                    this.bookID = this.bookID.concat(Integer.toString(Integer.parseInt(lastitemcode.substring(4, 7)) + 1));
+                }
+                else System.out.println("코드 카운트 범위를 초과했습니다.");
+            }
+            else this.bookID = this.bookID.concat("001");
+        }
+        else this.bookID = this.bookID.concat("001");
+        }
     }
 
 
@@ -220,27 +240,9 @@ class rentdata {
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getwillReturnday() {return willreturnday;}
-
-    void deletemark() {this.bookID = "0";}
-
-}
-
-class historydata {
-    private String bookID;
-    private String rentperson;
-    private String rentday;
-    private String returnday;
-
-    historydata(String bookId, String rentperson, String rentday, String returnday) {
-        this.bookID = bookId;
-        this.rentperson = rentperson;
-        this.rentday = rentday;
-        this.returnday = returnday;
+    void setReturnday(String cal) {
+        this.willreturnday = cal;
     }
-    String getbookID() {return bookID;}
-    String getRentPerson() {return rentperson;}
-    String getRentDay() {return rentday;}
-    String getReturnday() {return returnday;}
-    void markbookID() {this.bookID = null;}
+    void deletemark() {this.bookID = "0";}
 
 }

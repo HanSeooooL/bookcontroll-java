@@ -182,39 +182,27 @@ class titleUI extends JFrame implements GUIbones{
     }
 
     static void returnthebook(Book a) throws IOException {
-        ArrayList<rentdata> rents = FileInOut.File.fileRead.AllrentdataRead();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        historydata history;
-        for(int i = 0; i < rents.size(); i++) {
-            if(rents.get(i).getbookID().equals(a.getID())) {
-                history = new historydata(rents.get(i).getbookID(), rents.get(i).getRentPerson(), rents.get(i).getRentDay(),
-                        programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
-                FileInOut.File.fileSave.addhistory(history);
-                rents.get(i).deletemark();
-                break;
-            }
-        }
-        FileInOut.File.fileSave.saveallrent(rents);
+        FileInOut.countup = 0;
+        FileInOut.File.fileSave.savereturnbook(a,
+                programinside.getDays.gluecalender(Integer.toString(now.getYear()),
+                        Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
+        a.switchrent();
+        FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
+        reloadTable();
     }
 
     static void deletethebook(Book a) throws IOException {
         ArrayList<rentdata> rents = FileInOut.File.fileRead.AllrentdataRead();
-        ArrayList<historydata> historys = FileInOut.File.fileRead.AllhistorydataRead();
         for (int i = 0; i < rents.size(); i++) {
             if (rents.get(i).getbookID().equals(a.getID())) {
                 rents.get(i).deletemark();
                 break;
             }
         }
-        for(int i = 0; i < historys.size(); i++) {
-            if(historys.get(i).getbookID().toString().equals(a.getID().toString())) {
-                historys.get(i).markbookID();
-            }
-        }
         a.setID(null);
         FileInOut.File.fileSave.saveallrent(rents);
-        FileInOut.File.fileSave.saveallhistory(historys);
     }
 
     public void createComponents() {
@@ -867,7 +855,6 @@ class returnbookUI extends JFrame implements GUIbones{
 class viewhistoryUI extends JFrame implements GUIbones{
 
     static ArrayList<rentdata> rentdata;
-    static ArrayList<historydata> historydata;
     JPanel SearchPanel;
     static JTable table;
     JLabel Search;
@@ -890,7 +877,6 @@ class viewhistoryUI extends JFrame implements GUIbones{
         Book one;
         model.setNumRows(0);
         rentdata = FileInOut.File.fileRead.AllrentdataRead();
-        historydata = FileInOut.File.fileRead.AllhistorydataRead();
 
         for(int i = 0; i < rentdata.size(); i++) {
             one = searchwithbookID(rentdata.get(i).getbookID());
@@ -899,15 +885,6 @@ class viewhistoryUI extends JFrame implements GUIbones{
             Object[] data = {"O", one.getBookname(), one.getWriter(), one.getCompany(), rentdata.get(i).getRentPerson(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
             model.addRow(data);
         }
-
-        for(int i = 0; i < historydata.size(); i++) {
-            one = searchwithbookID(historydata.get(i).getbookID());
-            if(one == null) continue;
-
-            Object[] data = {"X", one.getBookname(), one.getWriter(), one.getCompany(), historydata.get(i).getRentPerson(), historydata.get(i).getRentDay(), historydata.get(i).getReturnday()};
-            model.addRow(data);
-        }
-
     }
 
     static void SearchTable(int section, String Keyword) {

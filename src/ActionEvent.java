@@ -452,7 +452,6 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
         JButton actionJButton = (JButton)e.getSource();
         if(actionJButton.getText().equals("반납")) {
             System.out.println("반납");
-            returnfinish returnfinish = new returnfinish(this.returnbookUI.rentdata);
             try {
                 titleUI.returnthebook(returnbookUI.one);
             } catch (IOException ex) {
@@ -463,6 +462,7 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            returnfinish returnfinish = new returnfinish(this.returnbookUI.rentdata);
             this.returnbookUI.dispose();
         }
         else if(actionJButton.getText().equals("취소")) {
