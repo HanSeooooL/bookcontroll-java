@@ -4,6 +4,7 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -12,8 +13,8 @@ import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-
+    public static void main(String[] args) throws IOException, SQLException {
+        DB.DB_connect();
         GUI.program();
 
         /*

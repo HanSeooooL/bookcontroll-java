@@ -193,12 +193,9 @@ class addbookUIEventListener implements ActionListener, WindowListener {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("등록")) {
             Book newone = new Book(addbookUI.genre.getSelectedIndex(), addbookUI.bookname.getText(), addbookUI.writer.getText(), addbookUI.company.getText());
-            FileInOut.File.fileSave.addbook(newone);
-            try {
-                titleUI.reloadTable();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            //FileInOut.File.fileSave.addbook(newone);
+            DBInOut.DBOut.addBook(newone);
+            titleUI.reloadTable();
 
             addbookUI.dispose();
         }
@@ -256,14 +253,10 @@ class updatebookUIEventListener implements ActionListener, WindowListener {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("수정")) {
             updatebookUI.one.setBookinfo(updatebookUI.bookname.getText(),updatebookUI.writer.getText(), updatebookUI.company.getText());
-            FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
-            try {
-                titleUI.reloadTable();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-            FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
-
+            //FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
+            DBInOut.DBOut.updateBook(updatebookUI.one);
+            titleUI.reloadTable();
+            //FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
             updatebookUI.dispose();
         }
         else if(actionJbutton.getText().equals("취소")) {
@@ -325,18 +318,18 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
                             rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()), rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
                     programinside.getDays.gluecalender(rentbookUI.returnyear.getItem(rentbookUI.returnyear.getSelectedIndex()),
                             rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()), rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
+            /*
             try {
                 FileInOut.File.fileSave.addrent(newdata);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+
             rentbookUI.one.switchrent();
             FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
-            try {
-                titleUI.reloadTable();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            */
+            DBInOut.DBOut.renttheBook(newdata);
+            titleUI.reloadTable();
             rentbookUI.dispose();
         }
         else if(actionJbutton.getText().equals("취소")) {
@@ -457,11 +450,7 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-            try {
-                titleUI.reloadTable();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            titleUI.reloadTable();
             returnfinish returnfinish = new returnfinish(this.returnbookUI.rentdata);
             this.returnbookUI.dispose();
         }
@@ -538,17 +527,15 @@ class deletewarningUIEventListener implements ActionListener, WindowListener{
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton actionJButton = (JButton)e.getSource();
         if(actionJButton.getText().equals("삭제")) {
-            try {
+            /*try {
                 titleUI.deletethebook(deletewarningUI.deleteBookUI.one);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
             FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
-            try {
-                titleUI.reloadTable();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+             */
+            DBInOut.DBOut.deletetheBook(deletewarningUI.deleteBookUI.one.getID());
+            titleUI.reloadTable();
             this.deletewarningUI.deleteBookUI.dispose();
             this.deletewarningUI.dispose();
 

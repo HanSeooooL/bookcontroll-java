@@ -54,7 +54,7 @@ class titleUI extends JFrame implements GUIbones{
     String[] headings;
     static DefaultTableModel model;
 
-    public titleUI() throws IOException {
+    public titleUI() {
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
@@ -62,9 +62,9 @@ class titleUI extends JFrame implements GUIbones{
         reloadTable();
     }
 
-    static void reloadTable() throws IOException {
+    static void reloadTable() {
         model.setNumRows(0);
-        Books = FileInOut.File.fileRead.AllbookRead();
+        Books = DBInOut.DBIn.readAllBook();
 
         for(int i = 0; i < Books.size(); i++) {
             String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
@@ -72,7 +72,11 @@ class titleUI extends JFrame implements GUIbones{
 
             if(!(Books.get(i).getrent() == 0)) {
                 rented = "O";
-                a = FileInOut.File.fileRead.checkthebookrent(Books.get(i).getID());
+                a = DBInOut.DBIn.checkrentdata(Books.get(i).getID());
+                if(a == null) {
+                    System.out.println(Books.get(i).getBookname() + "에 대한 대여정보를 읽지 못했습니다.");
+                    continue;
+                }
                 RentPerson = a.getRentPerson();
                 Rentday = a.getRentDay();
                 willReturnDay = a.getwillReturnday();
@@ -184,12 +188,15 @@ class titleUI extends JFrame implements GUIbones{
     static void returnthebook(Book a) throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
-        FileInOut.countup = 0;
+        /*FileInOut.countup = 0;
         FileInOut.File.fileSave.savereturnbook(a,
                 programinside.getDays.gluecalender(Integer.toString(now.getYear()),
                         Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
         a.switchrent();
         FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
+        */
+        DBInOut.DBOut.returntheBook(a.getID(), programinside.getDays.gluecalender(Integer.toString(now.getYear()),
+                Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
         reloadTable();
     }
 
