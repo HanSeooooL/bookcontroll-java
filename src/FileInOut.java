@@ -46,14 +46,16 @@ public class FileInOut {
             }
         }
         String line;
-        line = sc.nextLine();
-        if(sc.hasNextLine()) {
-            countup++;
-            if((res = checkwhereisbookdata(searchcode)) != -1)
-                return res;
-        }
-        if(searchcode.equals(line.substring(2, searchcode.length() + 2))) {
-            return countup;
+        if (sc.hasNextLine()){
+            line = sc.nextLine();
+            if (sc.hasNextLine()) {
+                countup++;
+                if ((res = checkwhereisbookdata(searchcode)) != -1)
+                    return res;
+            }
+            if (searchcode.equals(line.substring(2, searchcode.length() + 2))) {
+                return countup;
+            } else return -1;
         }
         else return -1;
     }
@@ -106,21 +108,25 @@ class fileRead {
         }
         String line, bookID;
         rentdata res;
-        line = sc.nextLine();
         if(sc.hasNextLine()) {
-            if((res = checkthebookrent(a)) != null) {
+            line = sc.nextLine();
+            if (sc.hasNextLine()) {
+                if ((res = checkthebookrent(a)) != null) {
+                    return res;
+                }
+            }
+            StringTokenizer token = new StringTokenizer(line, "#");
+            bookID = token.nextToken();
+            if (Objects.equals(a, bookID)) {
+                res = new rentdata(bookID, token.nextToken(), token.nextToken(), token.nextToken());
+                this.sc = null;
                 return res;
+            } else {
+                this.sc = null;
+                return null;
             }
         }
-        StringTokenizer token = new StringTokenizer(line, "#");
-        bookID = token.nextToken();
-        if(Objects.equals(a, bookID)) {
-            res = new rentdata(bookID, token.nextToken(), token.nextToken(), token.nextToken());
-            this.sc = null;
-            return res;
-        }
         else {
-            this.sc = null;
             return null;
         }
 
@@ -163,6 +169,9 @@ class fileSave {
         try {
             dir = new FileOutputStream("/Users/hanseol/data.txt");
         for(int i = 0; i < Books.size(); i++) {
+                if(Books.get(i).getID() == null) {
+                    continue;
+                }
                 by = Integer.toString(Books.get(i).getrent()).getBytes();
                 dir.write(by);
                 dir.write(sharp);

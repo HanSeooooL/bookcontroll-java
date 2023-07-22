@@ -132,7 +132,7 @@ class Book{
         } else {
             this.bookID = this.bookID.concat(Integer.toString(now.getMonthValue()));
         }
-        if(titleUI.Books == null) {
+        if(titleUI.Books == null || titleUI.Books.size() == 0 ) {
             this.bookID = this.bookID.concat("001");
 
         }

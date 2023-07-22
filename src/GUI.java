@@ -470,7 +470,7 @@ class deleteBookUI extends JFrame implements GUIbones{
 
     public deleteBookUI(Book a) throws IOException {
         this.one = a;
-        if(!this.one.getID().equals("0")) {
+        if(this.one.getrent() == 1) {
             rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
         }
         else {
