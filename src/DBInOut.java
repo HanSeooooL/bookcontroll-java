@@ -72,7 +72,7 @@ class DBOut {
             DB.ps.setString(1, day);
             DB.ps.setString(2, code);
             DB.ps.executeUpdate();
-            DB.ps = DB.con.prepareStatement("update bookcontroll.Book set rented = 0 where bookcode = ?");
+            DB.ps = DB.con.prepareStatement("update bookcontroll.Book set rented = 0 where initialcode = ?");
             DB.ps.setString(1, code);
             DB.ps.executeUpdate();
         } catch (SQLException e) {
@@ -90,7 +90,8 @@ class DBIn{
             DB.rs = DB.stmt.executeQuery("select * from bookcontroll.Book;");
             while(DB.rs.next()) {
                 res.add(new Book(DB.rs.getInt("rented"), DB.rs.getString("initialcode"),
-                        DB.rs.getString("bookname"), DB.rs.getString("writer"), DB.rs.getString("company")));
+                        DB.rs.getString("bookname"), DB.rs.getString("writer"),
+                        DB.rs.getString("company")));
             }
 
         } catch (SQLException e) {
@@ -103,7 +104,7 @@ class DBIn{
         rentdata res = null;
 
         try {
-            DB.ps = DB.con.prepareStatement("select * from bookcontroll.rentdata where bookcode = ?");
+            DB.ps = DB.con.prepareStatement("select * from bookcontroll.rentdata where bookcode = ? order by cast(returnday as unsigned) desc limit 1");
             DB.ps.setString(1, code);
             DB.rs = DB.ps.executeQuery();
             while(DB.rs.next()) {

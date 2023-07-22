@@ -740,7 +740,8 @@ class returnbookUI extends JFrame implements GUIbones{
     JButton returnfinish, cancel;
     public returnbookUI(Book a) throws IOException {
         this.one = a;
-        rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
+        //rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
+        rentdata = DBInOut.DBIn.checkrentdata(a.getID());
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
