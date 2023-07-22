@@ -66,7 +66,6 @@ class DBOut {
 
     void returntheBook(String code, String day) {
         try {
-            //DB.ps = DB.con.prepareStatement("select * bookcon")
             DB.ps = DB.con.prepareStatement("update bookcontroll.rentdata set returnday = ? " +
                     "where returnday = (select returnday from (select max(cast(returnday as unsigned)) as returnday from bookcontroll.rentdata where bookcode = ?) as returnday_t)");
             DB.ps.setString(1, day);
