@@ -106,13 +106,48 @@ class DBIn{
             DB.ps = DB.con.prepareStatement("select * from bookcontroll.rentdata where bookcode = ? order by cast(returnday as unsigned) desc limit 1");
             DB.ps.setString(1, code);
             DB.rs = DB.ps.executeQuery();
-            while(DB.rs.next()) {
+            while (DB.rs.next()) {
                 res = new rentdata(DB.rs.getString("bookcode"), DB.rs.getString("rentperson"),
                         DB.rs.getString("rentday"), DB.rs.getString("returnday"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return res;
+    }
+
+    ArrayList<rentdata> readAllrentdata() {
+        ArrayList<rentdata> res;
+        try {
+            res = new ArrayList<rentdata>();
+            DB.rs = DB.stmt.executeQuery("select * from bookcontroll.rentdata;");
+            while (DB.rs.next()) {
+                res.add(new rentdata(DB.rs.getString("bookcode"), DB.rs.getString("rentperson"),
+                        DB.rs.getString("rentday"), DB.rs.getString("returnday")));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return res;
+    }
+
+    Book matchrenttobook(String code) {
+        Book res = null;
+        try {
+            DB.ps = DB.con.prepareStatement("select * from bookcontroll.Book where initialcode = ? limit 1");
+            DB.ps.setString(1, code);
+            DB.rs = DB.ps.executeQuery();
+
+            while (DB.rs.next()) {
+                res = new Book(DB.rs.getInt("rented"), DB.rs.getString("initialcode"), DB.rs.getString("bookname"),
+                        DB.rs.getString("writer"), DB.rs.getString("company"));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return res;
     }
 }

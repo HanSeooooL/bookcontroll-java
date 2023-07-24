@@ -884,13 +884,23 @@ class viewhistoryUI extends JFrame implements GUIbones{
     static void reloadTable() throws IOException {
         Book one;
         model.setNumRows(0);
-        rentdata = FileInOut.File.fileRead.AllrentdataRead();
-
+        //rentdata = FileInOut.File.fileRead.AllrentdataRead();
+        /*
         for(int i = 0; i < rentdata.size(); i++) {
             one = searchwithbookID(rentdata.get(i).getbookID());
             if(one == null) continue;
 
             Object[] data = {"O", one.getBookname(), one.getWriter(), one.getCompany(), rentdata.get(i).getRentPerson(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
+            model.addRow(data);
+        }
+         */
+        rentdata = DBInOut.DBIn.readAllrentdata();
+
+        for(int i = 0; i < rentdata.size(); i++) {
+            one = DBInOut.DBIn.matchrenttobook(rentdata.get(i).getbookID());
+            if(one == null) continue;
+
+            Object[] data = {one.getBookname(), one.getWriter(), one.getCompany(), rentdata.get(i).getRentPerson(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
             model.addRow(data);
         }
     }
@@ -933,19 +943,9 @@ class viewhistoryUI extends JFrame implements GUIbones{
         }
     }
 
-    static Book searchwithbookID(String bookID) {
-        Book res = null;
-        for(int i = 0; i < titleUI.Books.size(); i++) {
-            if(titleUI.Books.get(i).getID().equals(bookID)) {
-                res = titleUI.Books.get(i);
-                break;
-            }
-        }
-        return res;
-    }
 
     public void createComponents() {
-        headings = new String[]{"대여중", "도서명", "저자", "출판사", "대여인", "대여일자", "반납일자"};
+        headings = new String[]{"도서명", "저자", "출판사", "대여인", "대여일자", "반납일자"};
         model = new DefaultTableModel(headings, 0) {
             public boolean isCellEditable(int rowIndex, int mCollndex) {
                 return false;
@@ -1079,7 +1079,7 @@ class returnfinish extends JFrame implements GUIbones{
 
     public void createComponents() {
         String day = Integer.toString(programinside.getDays.checkHowyouDidntReturn(rentdata.getwillReturnday()));
-        msg = new String("연체일: ");
+        msg = "연체일: ";
         msg = msg.concat(day);
         this.message = new JLabel(msg);
         this.message.setHorizontalAlignment(JLabel.CENTER);
