@@ -5,11 +5,9 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.TableView;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.UUID;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
 
@@ -23,7 +21,7 @@ public class GUI {
 
     static titleUI titleUI;
 
-    public static void program() throws IOException {
+    public static void program() {
        titleUI = new titleUI();
     }
 
@@ -96,7 +94,7 @@ class titleUI extends JFrame implements GUIbones{
     }
 
     static void SearchTable(int section, String Keyword) {
-        ArrayList<Object[]> res = new ArrayList<Object[]>();
+        ArrayList<Object[]> res = new ArrayList<>();
         for (int i = 0; i < table.getRowCount(); i++) {
             if (section == 0)  {    //도서명 검색
                 if((table.getValueAt(i, 1).toString().contains(Keyword))) {
@@ -143,8 +141,8 @@ class titleUI extends JFrame implements GUIbones{
     }
 
     static void seeunrentedbook() {
-        sorter = new TableRowSorter<DefaultTableModel>(model);
-        RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+        sorter = new TableRowSorter<>(model);
+        RowFilter<Object, Object> filter = new RowFilter<>() {
             @Override
             public boolean include(Entry<?, ?> entry) {
                 String population = (String) entry.getValue(4);
@@ -173,8 +171,8 @@ class titleUI extends JFrame implements GUIbones{
     }
 
     static void seerentedbook() {
-        sorter = new TableRowSorter<DefaultTableModel>(model);
-        RowFilter<Object, Object> filter = new RowFilter<Object, Object>() {
+        sorter = new TableRowSorter<>(model);
+        RowFilter<Object, Object> filter = new RowFilter<>() {
             @Override
             public boolean include(Entry<?, ?> entry) {
                 String population = (String) entry.getValue(4);
