@@ -5,6 +5,11 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,30 +70,30 @@ class titleUI extends JFrame implements GUIbones{
         Books = DBInOut.DBIn.readAllBook();
 
         for(int i = 0; i < Books.size(); i++) {
-            String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
+            String RentPerson, phonenumber, Rentday, willReturnDay, didntReturnday;
             rentdata a = null;
 
             if(!(Books.get(i).getrent() == 0)) {
-                rented = "O";
                 a = DBInOut.DBIn.checkrentdata(Books.get(i).getID());
                 if(a == null) {
                     System.out.println(Books.get(i).getBookname() + "에 대한 대여정보를 읽지 못했습니다.");
                     continue;
                 }
                 RentPerson = a.getRentPerson();
+                phonenumber = a.getphonenumber();
                 Rentday = a.getRentDay();
                 willReturnDay = a.getwillReturnday();
                 didntReturnday = Integer.toString(programinside.getDays.checkHowyouDidntReturn(a.getwillReturnday()));
             }
             else {
-                rented = "X";
                 RentPerson = " ";
+                phonenumber = " ";
                 Rentday = " ";
                 willReturnDay = " ";
                 didntReturnday = " ";
             }
-            Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(), rented,
-                    RentPerson, Rentday, willReturnDay, didntReturnday};
+            Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(),
+                    RentPerson, phonenumber, Rentday, willReturnDay, didntReturnday};
             model.addRow(data);
         }
     }
@@ -136,17 +141,17 @@ class titleUI extends JFrame implements GUIbones{
         return Books.get(i - 1);
     }
 
-    static void seeallbook() {
+    void seeallbook() {
         table.setRowSorter(null);
     }
 
-    static void seeunrentedbook() {
+    void seeunrentedbook() {
         sorter = new TableRowSorter<>(model);
         RowFilter<Object, Object> filter = new RowFilter<>() {
             @Override
             public boolean include(Entry<?, ?> entry) {
                 String population = (String) entry.getValue(4);
-                return population.equals("X");
+                return population.equals(" ");
             }
         };
         table.setRowSorter(sorter);
@@ -170,22 +175,20 @@ class titleUI extends JFrame implements GUIbones{
          */
     }
 
-    static void seerentedbook() {
+    void seerentedbook() {
         sorter = new TableRowSorter<>(model);
         RowFilter<Object, Object> filter = new RowFilter<>() {
             @Override
             public boolean include(Entry<?, ?> entry) {
                 String population = (String) entry.getValue(4);
-                return population.equals("O");
+                return !(population.equals(" "));
             }
         };
         table.setRowSorter(sorter);
         sorter.setRowFilter(filter);
     }
 
-    static void returnthebook(Book a) throws IOException {
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-
+    static void returnthebook(Book a, String day) throws IOException {
         /*FileInOut.countup = 0;
         FileInOut.File.fileSave.savereturnbook(a,
                 programinside.getDays.gluecalender(Integer.toString(now.getYear()),
@@ -193,8 +196,7 @@ class titleUI extends JFrame implements GUIbones{
         a.switchrent();
         FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
         */
-        DBInOut.DBOut.returntheBook(a.getID(), programinside.getDays.gluecalender(Integer.toString(now.getYear()),
-                Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
+        DBInOut.DBOut.returntheBook(a.getID(), day);
         reloadTable();
     }
 
@@ -249,12 +251,13 @@ class titleUI extends JFrame implements GUIbones{
         jmenubar.add(rentJMenu);
         jmenubar.add(viewJMenu);
 
-        headings = new String[]{"번호", "도서명", "저자", "출판사", "대여 여부", "대여인", "대여 일자", "반납 일자", "연체일"};
+        headings = new String[]{"번호", "도서명", "저자", "출판사", "대여인", "전화번호", "대여 일자", "반납 일자", "연체일"};
         model = new DefaultTableModel(headings, 0) {
             public boolean isCellEditable(int rowIndex, int mCollndex) {
                 return false;
             }
         };
+
         table = new JTable(model);
         //this.model.addRow(headings);
         table.setGridColor(Color.BLACK);
@@ -331,7 +334,6 @@ class addbookUI extends JFrame implements GUIbones{
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
-
     }
 
     public void createComponents() {
@@ -354,7 +356,7 @@ class addbookUI extends JFrame implements GUIbones{
         insertlines.add(new JLabel("        출판사"));
         insertlines.add(company);
         insertlines.add(new JLabel("        장르"));
-        insertlines.add(genre);;
+        insertlines.add(genre);
         insertlines.setLayout(grid);
         insertlines.setSize(500, 100);
 
@@ -476,10 +478,10 @@ class deleteBookUI extends JFrame implements GUIbones{
     public deleteBookUI(Book a) throws IOException {
         this.one = a;
         if(this.one.getrent() == 1) {
-            rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
+            rentdata = DBInOut.DBIn.checkrentdata(a.getID());
         }
         else {
-            rentdata = new rentdata(this.one.getID(), " ", " ", " ");
+            rentdata = new rentdata(this.one.getID(), " ", " ", " ", " ");
         }
         this.createComponents();
         this.setFrame();
@@ -591,12 +593,11 @@ class deleteBookUI extends JFrame implements GUIbones{
 
 class rentbookUI extends JFrame implements GUIbones{
     Book one;
-
+    JPanel phonenumber;
     JButton rentfinish, cancel;
-    JTextField rentname;
-    Choice rentyear, rentmonth, rentday, returnyear, returnmonth, returnday;
-    JLabel bookname, writer, company, rentnamee, rentdayy, returndayy, booknamee, writerr, companyy;
-
+    JTextField rentname, middlephonenumber, lastphonenumber;
+    Choice rentyear, rentmonth, rentday, returnyear, returnmonth, returnday, firstphonenumber;
+    JLabel bookname, writer, company, rentnamee, rentdayy, returndayy, booknamee, writerr, companyy, phonenumberr;
 
     public rentbookUI(Book one) {
         this.one = one;
@@ -606,7 +607,7 @@ class rentbookUI extends JFrame implements GUIbones{
     }
 
     public void createComponents() {
-        GridLayout grid = new GridLayout(6, 2);
+        GridLayout grid = new GridLayout(7, 2);
         grid.setVgap(20);
         grid.setHgap(5);
 
@@ -647,6 +648,41 @@ class rentbookUI extends JFrame implements GUIbones{
         rentname = new JTextField("");
         rentname.setHorizontalAlignment(JTextField.CENTER);
 
+        firstphonenumber = new Choice();
+        firstphonenumber.add("010");
+        firstphonenumber.add("02");
+        firstphonenumber.add("031");
+        firstphonenumber.add("032");
+        firstphonenumber.add("033");
+        firstphonenumber.add("041");
+        firstphonenumber.add("042");
+        firstphonenumber.add("043");
+        firstphonenumber.add("044");
+        firstphonenumber.add("051");
+        firstphonenumber.add("052");
+        firstphonenumber.add("053");
+        firstphonenumber.add("054");
+        firstphonenumber.add("055");
+        firstphonenumber.add("061");
+        firstphonenumber.add("062");
+        firstphonenumber.add("063");
+        firstphonenumber.add("064");
+
+        middlephonenumber = new JTextField(4);
+        lastphonenumber = new JTextField(4);
+
+        middlephonenumber.setDocument(new JTextFieldLimit(4));
+        lastphonenumber.setDocument(new JTextFieldLimit(4));
+
+        phonenumber = new JPanel();
+        phonenumber.setLayout(new FlowLayout());
+        phonenumber.add(firstphonenumber);
+        phonenumber.add(new JLabel("-"));
+        phonenumber.add(middlephonenumber);
+        phonenumber.add(new JLabel("-"));
+        phonenumber.add(lastphonenumber);
+
+
         rentyear = new Choice();
         rentmonth = new Choice();
         rentday = new Choice();
@@ -684,13 +720,17 @@ class rentbookUI extends JFrame implements GUIbones{
         rentnamee = new JLabel("대여인");
         rentdayy = new JLabel("대여일");
         returndayy = new JLabel("반납예정일");
+        phonenumberr = new JLabel("전화번호");
 
         rentnamee.setHorizontalAlignment(JLabel.CENTER);
         rentdayy.setHorizontalAlignment(JLabel.CENTER);
         returndayy.setHorizontalAlignment(JLabel.CENTER);
+        phonenumberr.setHorizontalAlignment(JLabel.CENTER);
 
         insertlines.add(rentnamee);
         insertlines.add(rentname);
+        insertlines.add(phonenumberr);
+        insertlines.add(phonenumber);
         insertlines.add(rentdayy);
         insertlines.add(choicerentday);
         insertlines.add(returndayy);
@@ -715,7 +755,7 @@ class rentbookUI extends JFrame implements GUIbones{
         setTitle("도서 대여");
         this.setBackground(Color.white);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(500,350));
+        this.setPreferredSize(new Dimension(500,390));
         this.pack();
         setVisible(true);
     }
@@ -732,10 +772,12 @@ class returnbookUI extends JFrame implements GUIbones{
 
     Book one;
     rentdata rentdata;
-    JPanel displayrentinfo, buttonplace, centerplace;
+    JPanel displayrentinfo, buttonplace, centerplace, returndayplace;
     JLabel booknamee, writerr, companyy, rentpersonn, rentdayy, willreturndayy, todayy;
     JLabel bookname, writer, company, rentperson, rentday, willreturnday, today;
     JButton returnfinish, cancel;
+    JCheckBox todayorsettingtheday;
+    Choice year, month, day;
     public returnbookUI(Book a) throws IOException {
         this.one = a;
         //rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
@@ -761,8 +803,103 @@ class returnbookUI extends JFrame implements GUIbones{
         this.rentperson = new JLabel(this.rentdata.getRentPerson());
         this.rentday = new JLabel(this.rentdata.getRentDay());
         this.willreturnday = new JLabel(this.rentdata.getwillReturnday());
-        this.today = new JLabel(programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
 
+        this.todayorsettingtheday = new JCheckBox("오늘");
+        year = new Choice();
+        month = new Choice();
+        day = new Choice();
+
+        for(int i = Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear(); i < 1; i++) {
+            year.add(Integer.toString(now.getYear() + i));
+        }
+        for(int i = 1; i < now.getMonthValue() + 1; i++ ) {
+            month.add(Integer.toString(i));
+        }
+        for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+            day.add(Integer.toString(i));
+        }
+        year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
+        month.select(now.getMonthValue() - 1);
+        day.select(now.getDayOfMonth() - 1);
+        returndayplace = new JPanel();
+        returndayplace.setLayout(new FlowLayout());
+        returndayplace.add(todayorsettingtheday);
+        returndayplace.add(year);
+        returndayplace.add(month);
+        returndayplace.add(day);
+
+        year.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(year.getSelectedItem()) == now.getYear()) {
+                    month.removeAll();
+                    for(int i = 1; i < now.getMonthValue() + 1; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    month.removeAll();
+                    for(int i = 1; i < 13; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                    day.removeAll();
+                    for(int i = 1; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
+
+        month.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(month.getSelectedItem()) == now.getMonthValue()
+                        && Integer.parseInt(year.getSelectedItem()) == now.getYear()) {
+                    day.removeAll();
+                    for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                    day.removeAll();
+                    for(int i = 1; i < 30; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                        || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                    day.removeAll();
+                    for(int i = 1 ; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    day.removeAll();
+                    for(int i = 1; i < 31; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
+
+        todayorsettingtheday.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED) {
+                    year.select(5);
+                    month.select(now.getMonthValue() - 1);
+                    day.select(now.getDayOfMonth() - 1);
+                    year.setEnabled(false);
+                    month.setEnabled(false);
+                    day.setEnabled(false);
+                }
+                else {
+                    year.setEnabled(true);
+                    month.setEnabled(true);
+                    day.setEnabled(true);
+                }
+            }
+        });
 
         this.bookname.setPreferredSize(new Dimension(450, 20));
 
@@ -772,7 +909,7 @@ class returnbookUI extends JFrame implements GUIbones{
         this.rentpersonn = new JLabel("대여인");
         this.rentdayy = new JLabel("대여일");
         this.willreturndayy = new JLabel("반납 예정일");
-        this.todayy = new JLabel("오늘 날짜");
+        this.todayy = new JLabel("반납일");
 
         this.booknamee.setHorizontalAlignment(JLabel.CENTER);
         this.writerr.setHorizontalAlignment(JLabel.CENTER);
@@ -781,7 +918,6 @@ class returnbookUI extends JFrame implements GUIbones{
         this.rentdayy.setHorizontalAlignment(JLabel.CENTER);
         this.willreturndayy.setHorizontalAlignment(JLabel.CENTER);
         this.todayy.setHorizontalAlignment(JLabel.CENTER);
-
 
         this.returnfinish = new JButton("반납");
         this.cancel = new JButton("취소");
@@ -801,7 +937,7 @@ class returnbookUI extends JFrame implements GUIbones{
         this.displayrentinfo.add(this.willreturndayy);
         this.displayrentinfo.add(this.willreturnday);
         this.displayrentinfo.add(this.todayy);
-        this.displayrentinfo.add(this.today);
+        this.displayrentinfo.add(this.returndayplace);
 
         bookname.setOpaque(true);
         bookname.setBackground(Color.WHITE);
@@ -821,9 +957,6 @@ class returnbookUI extends JFrame implements GUIbones{
         willreturnday.setOpaque(true);
         willreturnday.setBackground(Color.WHITE);
         willreturnday.setBorder(border);
-        today.setOpaque(true);
-        today.setBackground(Color.WHITE);
-        today.setBorder(border);
 
         this.buttonplace = new JPanel();
         this.buttonplace.add(returnfinish);
@@ -845,7 +978,7 @@ class returnbookUI extends JFrame implements GUIbones{
         setTitle("도서 반납");
         this.setBackground(Color.white);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(500,350));
+        this.setPreferredSize(new Dimension(650,380));
         this.pack();
         setVisible(true);
     }
@@ -854,6 +987,7 @@ class returnbookUI extends JFrame implements GUIbones{
         returnbookUIEventListener returnbookUIEventListener = new returnbookUIEventListener(this);
         returnfinish.addActionListener(returnbookUIEventListener);
         cancel.addActionListener(returnbookUIEventListener);
+        todayorsettingtheday.addActionListener(returnbookUIEventListener);
         this.addWindowListener(returnbookUIEventListener);
     }
 }
@@ -870,6 +1004,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
     String[] headings;
     JScrollPane jScrollPane;
     static DefaultTableModel model;
+    static TableRowSorter<DefaultTableModel> sorter;
 
     public viewhistoryUI() throws IOException {
         this.createComponents();
@@ -898,7 +1033,9 @@ class viewhistoryUI extends JFrame implements GUIbones{
             one = DBInOut.DBIn.matchrenttobook(rentdata.get(i).getbookID());
             if(one == null) continue;
 
-            Object[] data = {one.getBookname(), one.getWriter(), one.getCompany(), rentdata.get(i).getRentPerson(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
+            Object[] data = {one.getBookname(), one.getWriter(), one.getCompany(),
+                    rentdata.get(i).getRentPerson(), rentdata.get(i).getphonenumber(),
+                    rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
             model.addRow(data);
         }
     }
@@ -908,30 +1045,34 @@ class viewhistoryUI extends JFrame implements GUIbones{
         for (int i = 0; i < table.getRowCount(); i++) {
             if (section == 0)  {    //도서명 검색
                 if((table.getValueAt(i, 1).toString().contains(Keyword))) {
-                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
-                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
-                            table.getValueAt(i, 6).toString()});
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(),
+                            table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
+                            table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString()});
                 }
             }
             else if(section == 1) {
                 if((table.getValueAt(i, 2).toString().contains(Keyword))) {
-                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
-                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
-                            table.getValueAt(i, 6).toString()});
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(),
+                            table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
+                            table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString()});
                 }
             }
             else if (section == 2) {
                 if((table.getValueAt(i, 3).toString().contains(Keyword))) {
-                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
-                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
-                            table.getValueAt(i, 6).toString()});
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(),
+                            table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
+                            table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString()});
                 }
             }
             else if (section == 3) {
                 if((table.getValueAt(i, 4).toString().contains(Keyword))) {
-                    res.add(new Object[] {table.getValueAt(i, 0).toString(), table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
-                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(), table.getValueAt(i, 5).toString(),
-                            table.getValueAt(i, 6).toString()});
+                    res.add(new Object[] {table.getValueAt(i, 0).toString(),
+                            table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
+                            table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
+                            table.getValueAt(i, 5).toString(), table.getValueAt(i, 6).toString()});
                 }
             }
         }
@@ -941,9 +1082,44 @@ class viewhistoryUI extends JFrame implements GUIbones{
         }
     }
 
+    static void datefilter(String startday, String finishday) {
+        sorter = new TableRowSorter<>(model);
+        RowFilter<Object, Object> filter = new RowFilter<>() {
+            @Override
+            public boolean include(Entry<?, ?> entry) {
+                String population = (String) entry.getValue(6);
+                if(Integer.parseInt(population.substring(0, 4)) < Integer.parseInt(finishday.substring(0, 4))
+                        && Integer.parseInt(population.substring(0, 4)) > Integer.parseInt(startday.substring(0, 4))) {
+                    return true;
+                }
+                else if(Integer.parseInt(population.substring(0, 4)) == Integer.parseInt(startday.substring(0, 4))) {
+                    if(Integer.parseInt(population.substring(4, 6)) > Integer.parseInt(startday.substring(4, 6)))
+                        return true;
+                    else if(Integer.parseInt(population.substring(4, 6)) == Integer.parseInt(startday.substring(4, 6))){
+                        return Integer.parseInt(population.substring(6, 8)) >= Integer.parseInt(startday.substring(6, 8));
+                    }
+                    else
+                        return false;
+                }
+                else if(Integer.parseInt(population.substring(0, 4)) == Integer.parseInt(finishday.substring(0, 4))) {
+                    if(Integer.parseInt(population.substring(4, 6)) < Integer.parseInt(finishday.substring(4, 6)))
+                        return true;
+                    else if(Integer.parseInt(population.substring(4, 6)) == Integer.parseInt(finishday.substring(4, 6))){
+                        return Integer.parseInt(population.substring(6, 8)) <= Integer.parseInt(finishday.substring(6, 8));
+                    }
+                    else
+                        return false;
+                }
+                else return false;
+            }
+        };
+        table.setRowSorter(sorter);
+        sorter.setRowFilter(filter);
+    }
+
 
     public void createComponents() {
-        headings = new String[]{"도서명", "저자", "출판사", "대여인", "대여일자", "반납일자"};
+        headings = new String[]{"도서명", "저자", "출판사", "대여인"," 전화번호", "대여일자", "반납일자"};
         model = new DefaultTableModel(headings, 0) {
             public boolean isCellEditable(int rowIndex, int mCollndex) {
                 return false;
@@ -956,7 +1132,6 @@ class viewhistoryUI extends JFrame implements GUIbones{
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
         table.setAutoCreateRowSorter(true);
-        TableRowSorter sorter = new TableRowSorter(table.getModel());
         table.setRowSorter(sorter);
 
         Search = new JLabel("검색:");
@@ -1151,5 +1326,22 @@ class errorUI extends JFrame implements GUIbones{
         this.accept.addActionListener(errorUIEventListener);
         this.addWindowListener(errorUIEventListener);
 
+    }
+}
+
+class JTextFieldLimit extends PlainDocument {
+    private int limit;
+
+    public JTextFieldLimit(int limit) {
+        super();
+        this.limit = limit;
+    }
+    public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+        if(str == null)
+            return;
+
+        if(getLength() + str.length() <= limit) {
+            super.insertString(offset, str, attr);
+        }
     }
 }

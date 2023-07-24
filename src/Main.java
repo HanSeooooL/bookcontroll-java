@@ -16,6 +16,13 @@ public class Main {
     public static void main(String[] args) throws IOException, SQLException {
         DB.DB_connect();
         GUI.program();
+        /*int i = 0;
+        while(i < 30) {
+            Book newone = new Book();
+            i++;
+        }*/
+
+        //addpersonUI addperson = new addpersonUI();
 
         /*
         String bookgenre, bookname, year, code;
@@ -225,22 +232,25 @@ class rentdata {
     private String rentperson;
     private String rentday;
     private String willreturnday;
+    private String phonenumber;
 
-    rentdata(String bookID, String rentperson, String rentday, String willreturnday) {
+    rentdata(String bookID, String rentperson, String phonenumber,String rentday, String willreturnday) {
         this.bookID = bookID;
         this.rentperson = rentperson;
         this.rentday = rentday;
         this.willreturnday = willreturnday;
+        this.phonenumber = phonenumber;
     }
 
     void print_rentdata() {
         System.out.println(this.bookID + " " + this.rentperson + " " + this.rentday + " " + this.willreturnday);
     }
 
-    String getbookID() {return bookID;}
-    String getRentPerson() {return rentperson;}
-    String getRentDay() {return rentday;}
-    String getwillReturnday() {return willreturnday;}
+    String getbookID() {return this.bookID;}
+    String getRentPerson() {return this.rentperson;}
+    String getRentDay() {return this.rentday;}
+    String getwillReturnday() {return this.willreturnday;}
+    String getphonenumber() {return this.phonenumber;}
     void setReturnday(String cal) {
         this.willreturnday = cal;
     }

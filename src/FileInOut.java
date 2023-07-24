@@ -118,7 +118,7 @@ class fileRead {
             StringTokenizer token = new StringTokenizer(line, "#");
             bookID = token.nextToken();
             if (Objects.equals(a, bookID)) {
-                res = new rentdata(bookID, token.nextToken(), token.nextToken(), token.nextToken());
+                res = new rentdata(bookID, token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken());
                 this.sc = null;
                 return res;
             } else {
@@ -235,12 +235,12 @@ class fileSave {
             for(int i = 0; i < count; i++) {
                 line = sc.nextLine();
                 StringTokenizer token = new StringTokenizer(line, "#");
-                beforedatas.add(new rentdata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
+                beforedatas.add(new rentdata(token.nextToken(), token.nextToken(), token.nextToken(),token.nextToken(), token.nextToken()));
             }
             while(sc.hasNextLine()) {
                 line = sc.nextLine();
                 StringTokenizer token = new StringTokenizer(line, "#");
-                datas.add(new rentdata(token.nextToken(), token.nextToken(), token.nextToken(), token.nextToken()));
+                datas.add(new rentdata(token.nextToken(), token.nextToken(), token.nextToken(),token.nextToken(), token.nextToken()));
             }
             datas.get(0).setReturnday(day);
             try {

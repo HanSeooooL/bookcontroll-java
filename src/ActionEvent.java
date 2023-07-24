@@ -1,11 +1,8 @@
-import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.UUID;
 import javax.swing.*;
 
 public class ActionEvent{ }
@@ -312,12 +309,17 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("대여")) {
+            String phonenumber = rentbookUI.firstphonenumber.getItem(rentbookUI.firstphonenumber.getSelectedIndex());
+            phonenumber = phonenumber.concat("-".concat(rentbookUI.middlephonenumber.getText()));
+            phonenumber = phonenumber.concat("-".concat(rentbookUI.lastphonenumber.getText()));
             System.out.println("대여");
-            rentdata newdata = new rentdata(rentbookUI.one.getID(), rentbookUI.rentname.getText(),
+            rentdata newdata = new rentdata(rentbookUI.one.getID(), rentbookUI.rentname.getText(), phonenumber,
                     programinside.getDays.gluecalender(rentbookUI.rentyear.getItem(rentbookUI.rentyear.getSelectedIndex()),
-                            rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()), rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
+                            rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()),
+                            rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
                     programinside.getDays.gluecalender(rentbookUI.returnyear.getItem(rentbookUI.returnyear.getSelectedIndex()),
-                            rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()), rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
+                            rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()),
+                            rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
             /*
             try {
                 FileInOut.File.fileSave.addrent(newdata);
@@ -446,7 +448,9 @@ class returnbookUIEventListener implements  ActionListener, WindowListener {
         if(actionJButton.getText().equals("반납")) {
             System.out.println("반납");
             try {
-                titleUI.returnthebook(returnbookUI.one);
+                ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+                titleUI.returnthebook(returnbookUI.one, programinside.getDays.gluecalender(returnbookUI.year.getSelectedItem(),
+                        returnbookUI.month.getSelectedItem(), returnbookUI.day.getSelectedItem()));
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
