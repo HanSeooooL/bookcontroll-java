@@ -189,7 +189,8 @@ class addbookUIEventListener implements ActionListener, WindowListener {
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("등록")) {
-            Book newone = new Book(addbookUI.genre.getSelectedIndex(), addbookUI.bookname.getText(), addbookUI.writer.getText(), addbookUI.company.getText());
+            Book newone = new Book(addbookUI.genre.getSelectedIndex(), addbookUI.bookname.getText(),
+                    addbookUI.writer.getText(), addbookUI.company.getText());
             //FileInOut.File.fileSave.addbook(newone);
             DBInOut.DBOut.addBook(newone);
             titleUI.reloadTable();
@@ -249,7 +250,8 @@ class updatebookUIEventListener implements ActionListener, WindowListener {
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("수정")) {
-            updatebookUI.one.setBookinfo(updatebookUI.bookname.getText(),updatebookUI.writer.getText(), updatebookUI.company.getText());
+            updatebookUI.one.setBookinfo(updatebookUI.bookname.getText(),updatebookUI.writer.getText(),
+                    updatebookUI.company.getText());
             //FileInOut.File.fileSave.saveAllbooks(titleUI.Books);
             DBInOut.DBOut.updateBook(updatebookUI.one);
             titleUI.reloadTable();
@@ -314,9 +316,9 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
             phonenumber = phonenumber.concat("-".concat(rentbookUI.lastphonenumber.getText()));
             System.out.println("대여");
             rentdata newdata = new rentdata(rentbookUI.one.getID(), rentbookUI.rentname.getText(), phonenumber,
-                    programinside.getDays.gluecalender(rentbookUI.rentyear.getItem(rentbookUI.rentyear.getSelectedIndex()),
-                            rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()),
-                            rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
+                    programinside.getDays.gluecalender(rentbookUI.year.getItem(rentbookUI.year.getSelectedIndex()),
+                            rentbookUI.month.getItem(rentbookUI.month.getSelectedIndex()),
+                            rentbookUI.day.getItem(rentbookUI.day.getSelectedIndex())),
                     programinside.getDays.gluecalender(rentbookUI.returnyear.getItem(rentbookUI.returnyear.getSelectedIndex()),
                             rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()),
                             rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));

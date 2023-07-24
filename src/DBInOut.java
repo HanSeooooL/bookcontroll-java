@@ -10,7 +10,8 @@ public class DBInOut {
 class DBOut {
     void addBook(Book a) {
         try {
-            DB.ps = DB.con.prepareStatement("insert into bookcontroll.Book(book_initialcode, bookname, writer, company, rented) value(?, ?, ?, ?, ?);");
+            DB.ps = DB.con.prepareStatement("insert into bookcontroll.Book" +
+                    "(book_initialcode, bookname, writer, company, rented) value(?, ?, ?, ?, ?);");
             DB.ps.setString(1, a.getID());
             DB.ps.setString(2, a.getBookname());
             DB.ps.setString(3, a.getWriter());
@@ -24,7 +25,8 @@ class DBOut {
 
     void updateBook(Book a) {
         try {
-            DB.ps = DB.con.prepareStatement("update bookcontroll.Book set bookname = ?, writer = ?, company = ? where book_initialcode = ?;");
+            DB.ps = DB.con.prepareStatement("update bookcontroll.Book set bookname = ?, writer = ?, company = ? " +
+                    "where book_initialcode = ?;");
             DB.ps.setString(1, a.getBookname());
             DB.ps.setString(2, a.getWriter());
             DB.ps.setString(3, a.getCompany());
@@ -50,7 +52,8 @@ class DBOut {
 
     void renttheBook(rentdata a) {
         try {
-            DB.ps = DB.con.prepareStatement("insert into bookcontroll.rentdata(book_initialcode, rentperson, phonenumber, rentday, returnday) value(?, ?, ?, ?, ?);");
+            DB.ps = DB.con.prepareStatement("insert into bookcontroll.rentdata" +
+                    "(book_initialcode, rentperson, phonenumber, rentday, returnday) value(?, ?, ?, ?, ?);");
             DB.ps.setString(1, a.getbookID());
             DB.ps.setString(2, a.getRentPerson());
             DB.ps.setString(3, a.getphonenumber());
@@ -105,7 +108,8 @@ class DBIn{
         rentdata res = null;
 
         try {
-            DB.ps = DB.con.prepareStatement("select * from bookcontroll.rentdata where book_initialcode = ? order by cast(returnday as unsigned) desc limit 1");
+            DB.ps = DB.con.prepareStatement("select * from bookcontroll.rentdata where book_initialcode = ? " +
+                    "order by cast(returnday as unsigned) desc limit 1");
             DB.ps.setString(1, code);
             DB.rs = DB.ps.executeQuery();
             while (DB.rs.next()) {
@@ -144,7 +148,8 @@ class DBIn{
             DB.rs = DB.ps.executeQuery();
 
             while (DB.rs.next()) {
-                res = new Book(DB.rs.getInt("rented"), DB.rs.getString("book_initialcode"), DB.rs.getString("bookname"),
+                res = new Book(DB.rs.getInt("rented"),
+                        DB.rs.getString("book_initialcode"), DB.rs.getString("bookname"),
                         DB.rs.getString("writer"), DB.rs.getString("company"));
             }
 
