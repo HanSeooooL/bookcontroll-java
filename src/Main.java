@@ -231,7 +231,7 @@ class rentdata {
         this.rentperson = rentperson;
         this.rentday = rentday;
         this.willreturnday = willreturnday;
-        this.phonenumber = phonenumber
+        this.phonenumber = phonenumber;
     }
 
     void print_rentdata() {
@@ -242,6 +242,7 @@ class rentdata {
     String getRentPerson() {return rentperson;}
     String getRentDay() {return rentday;}
     String getwillReturnday() {return willreturnday;}
+    String getphonenumber() {return this.phonenumber;}
     void setReturnday(String cal) {
         this.willreturnday = cal;
     }

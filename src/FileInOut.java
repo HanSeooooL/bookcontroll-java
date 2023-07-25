@@ -210,6 +210,9 @@ class fileSave {
         by = rent.getRentPerson().getBytes();
         dir.write(by);
         dir.write(sharp);
+        by = rent.getphonenumber().getBytes();
+        dir.write(by);
+        dir.write(sharp);
         by = rent.getRentDay().getBytes();
         dir.write(by);
         dir.write(sharp);
@@ -261,6 +264,9 @@ class fileSave {
                     by = beforedatas.get(i).getRentPerson().getBytes();
                     dir.write(by);
                     dir.write(sharp);
+                    by = beforedatas.get(i).getphonenumber().getBytes();
+                    dir.write(by);
+                    dir.write(sharp);
                     by = beforedatas.get(i).getRentDay().getBytes();
                     dir.write(by);
                     dir.write(sharp);
@@ -273,6 +279,9 @@ class fileSave {
                     dir.write(by);
                     dir.write(sharp);
                     by = datas.get(i).getRentPerson().getBytes();
+                    dir.write(by);
+                    dir.write(sharp);
+                    by = datas.get(i).getphonenumber().getBytes();
                     dir.write(by);
                     dir.write(sharp);
                     by = datas.get(i).getRentDay().getBytes();

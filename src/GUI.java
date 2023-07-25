@@ -72,26 +72,26 @@ class titleUI extends JFrame implements GUIbones{
         Books = FileInOut.File.fileRead.AllbookRead();
 
         for(int i = 0; i < Books.size(); i++) {
-            String rented, RentPerson, Rentday, willReturnDay, didntReturnday;
+            String RentPerson, Rentday, willReturnDay, didntReturnday, phonenumber;
             rentdata a = null;
 
             if(!(Books.get(i).getrent() == 0)) {
-                rented = "O";
                 a = FileInOut.File.fileRead.checkthebookrent(Books.get(i).getID());
                 RentPerson = a.getRentPerson();
+                phonenumber= a.getphonenumber();
                 Rentday = a.getRentDay();
                 willReturnDay = a.getwillReturnday();
                 didntReturnday = Integer.toString(programinside.getDays.checkHowyouDidntReturn(a.getwillReturnday()));
             }
             else {
-                rented = "X";
                 RentPerson = " ";
+                phonenumber = " ";
                 Rentday = " ";
                 willReturnDay = " ";
                 didntReturnday = " ";
             }
-            Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(), rented,
-                    RentPerson, Rentday, willReturnDay, didntReturnday};
+            Object[] data = {Integer.toString(i + 1), Books.get(i).getBookname(), Books.get(i).getWriter(), Books.get(i).getCompany(),
+                    RentPerson, phonenumber, Rentday, willReturnDay, didntReturnday};
             model.addRow(data);
         }
     }
@@ -149,7 +149,7 @@ class titleUI extends JFrame implements GUIbones{
             @Override
             public boolean include(Entry<?, ?> entry) {
                 String population = (String) entry.getValue(4);
-                return population.equals("X");
+                return population.equals(" ");
             }
         };
         table.setRowSorter(sorter);
@@ -179,7 +179,7 @@ class titleUI extends JFrame implements GUIbones{
             @Override
             public boolean include(Entry<?, ?> entry) {
                 String population = (String) entry.getValue(4);
-                return population.equals("O");
+                return !population.equals(" ");
             }
         };
         table.setRowSorter(sorter);
@@ -1067,7 +1067,8 @@ class viewhistoryUI extends JFrame implements GUIbones{
             one = searchwithbookID(rentdata.get(i).getbookID());
             if(one == null) continue;
 
-            Object[] data = {"O", one.getBookname(), one.getWriter(), one.getCompany(), rentdata.get(i).getRentPerson(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
+            Object[] data = {one.getBookname(), one.getWriter(), one.getCompany(),
+                    rentdata.get(i).getRentPerson(), rentdata.get(i).getphonenumber(), rentdata.get(i).getRentDay(), rentdata.get(i).getwillReturnday()};
             model.addRow(data);
         }
     }
@@ -1122,7 +1123,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
     }
 
     public void createComponents() {
-        headings = new String[]{"대여중", "도서명", "저자", "출판사", "대여인", "대여일자", "반납일자"};
+        headings = new String[]{"도서명", "저자", "출판사", "대여인", "전화번호", "대여일자", "반납일자"};
         model = new DefaultTableModel(headings, 0) {
             public boolean isCellEditable(int rowIndex, int mCollndex) {
                 return false;
