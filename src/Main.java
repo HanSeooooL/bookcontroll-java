@@ -1,23 +1,18 @@
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
 
 
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public static void main(String[] args) throws SQLException {
         DB.DB_connect();
-        //GUI.program();
-
-        setdateUI setdateUI = new setdateUI();
+        GUI.program();
 
         /*int i = 0;
         while(i < 30) {
@@ -128,7 +123,7 @@ class Book{
     private String writer;
     private String company;
 
-    Book(int genre, String booknamee, String writerr, String companyy) {
+    Book(String booknamee, String writerr, String companyy) {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         String lastitemcode;
         this.bookID = "";

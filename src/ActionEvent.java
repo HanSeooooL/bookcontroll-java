@@ -195,7 +195,7 @@ class addbookUIEventListener implements ActionListener, WindowListener {
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton actionJbutton = (JButton)e.getSource();
         if(actionJbutton.getText().equals("등록")) {
-            Book newone = new Book(addbookUI.genre.getSelectedIndex(), addbookUI.bookname.getText(),
+            Book newone = new Book(addbookUI.bookname.getText(),
                     addbookUI.writer.getText(), addbookUI.company.getText());
             //FileInOut.File.fileSave.addbook(newone);
             DBInOut.DBOut.addBook(newone);
@@ -525,7 +525,7 @@ class viewhistorySearchEventListener implements  ActionListener {
             this.viewhistoryUI.dispose();
         }
         else if(actionJButton.getText().equals("기간 설정")) {
-
+            setdateUI setdateUI = new setdateUI(this.viewhistoryUI);
         }
     }
 }
@@ -660,7 +660,22 @@ class setdateUIEventListener implements ActionListener, WindowListener {
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
         JButton ActionJButton = (JButton) e.getSource();
+        String startcal, lastcal;
         if(ActionJButton.getText().equals("확인")) {
+            startcal = programinside.getDays.gluecalender(
+                    setdateUI.startyear.getSelectedItem(), setdateUI.startmonth.getSelectedItem(), setdateUI.startday.getSelectedItem());
+            lastcal = programinside.getDays.gluecalender(
+                    setdateUI.lastyear.getSelectedItem(), setdateUI.lastmonth.getSelectedItem(), setdateUI.lastday.getSelectedItem());
+            if(Integer.parseInt(lastcal) < Integer.parseInt(startcal)) {
+                errorUI errorUI = new errorUI("기간이 잘못 입력되었습니다.");
+            }
+            else {
+                setdateUI.viewhistoryUI.datefilter(startcal, lastcal);
+                setdateUI.dispose();
+            }
+        }
+        else if (ActionJButton.getText().equals("취소")) {
+            setdateUI.dispose();
         }
     }
 

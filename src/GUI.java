@@ -1286,7 +1286,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
         ArrayList<Object[]> res = new ArrayList<Object[]>();
         for (int i = 0; i < table.getRowCount(); i++) {
             if (section == 0)  {    //도서명 검색
-                if((table.getValueAt(i, 1).toString().contains(Keyword))) {
+                if((table.getValueAt(i, 0).toString().contains(Keyword))) {
                     res.add(new Object[] {table.getValueAt(i, 0).toString(),
                             table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
                             table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
@@ -1294,7 +1294,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
                 }
             }
             else if(section == 1) {
-                if((table.getValueAt(i, 2).toString().contains(Keyword))) {
+                if((table.getValueAt(i, 1).toString().contains(Keyword))) {
                     res.add(new Object[] {table.getValueAt(i, 0).toString(),
                             table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
                             table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
@@ -1302,7 +1302,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
                 }
             }
             else if (section == 2) {
-                if((table.getValueAt(i, 3).toString().contains(Keyword))) {
+                if((table.getValueAt(i, 2).toString().contains(Keyword))) {
                     res.add(new Object[] {table.getValueAt(i, 0).toString(),
                             table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
                             table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
@@ -1310,7 +1310,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
                 }
             }
             else if (section == 3) {
-                if((table.getValueAt(i, 4).toString().contains(Keyword))) {
+                if((table.getValueAt(i, 3).toString().contains(Keyword))) {
                     res.add(new Object[] {table.getValueAt(i, 0).toString(),
                             table.getValueAt(i, 1).toString(), table.getValueAt(i, 2).toString(),
                             table.getValueAt(i, 3).toString(), table.getValueAt(i, 4).toString(),
@@ -1329,7 +1329,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
         RowFilter<Object, Object> filter = new RowFilter<>() {
             @Override
             public boolean include(Entry<?, ?> entry) {
-                String population = (String) entry.getValue(6);
+                String population = (String) entry.getValue(5);
                 if(Integer.parseInt(population.substring(0, 4)) < Integer.parseInt(finishday.substring(0, 4))
                         && Integer.parseInt(population.substring(0, 4)) > Integer.parseInt(startday.substring(0, 4))) {
                     return true;
@@ -1423,19 +1423,22 @@ class viewhistoryUI extends JFrame implements GUIbones{
         viewhistorySearchEventListener viewhistorySearchEventListener = new viewhistorySearchEventListener(this);
         Searchstart.addActionListener(viewhistorySearchEventListener);
         exit.addActionListener(viewhistorySearchEventListener);
+        setdateview.addActionListener(viewhistorySearchEventListener);
 
     }
 }
 
 class setdateUI extends JFrame implements GUIbones {
+    viewhistoryUI viewhistoryUI;
     JPanel buttonspace, insertspace;
     JButton accept, cancel;
     Choice startyear, startmonth, startday, lastyear, lastmonth, lastday;
 
-    setdateUI() {
+    setdateUI(viewhistoryUI viewhistoryUI) {
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
+        this.viewhistoryUI = viewhistoryUI;
     }
 
     @Override
@@ -1520,6 +1523,7 @@ class setdateUI extends JFrame implements GUIbones {
             for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(6, 8)) + 1; i++) {
                 this.lastday.add(Integer.toString(i));
             }
+            this.lastday.select(Integer.parseInt(startlast.get(1).substring(6, 8)) - 1);
         }
 
         startyear.addItemListener(new ItemListener() {
@@ -1720,6 +1724,7 @@ class setdateUI extends JFrame implements GUIbones {
         GridLayout grid = new GridLayout(2, 1);
         c.setLayout(grid);
         c.add(insertspace);
+        c.add(buttonspace);
     }
 
     @Override
@@ -1733,6 +1738,9 @@ class setdateUI extends JFrame implements GUIbones {
 
     @Override
     public void ConnectEventListener() {
+        setdateUIEventListener setdateUIEventListener = new setdateUIEventListener(this);
+        this.accept.addActionListener(setdateUIEventListener);
+        this.cancel.addActionListener(setdateUIEventListener);
     }
 }
 
