@@ -51,7 +51,12 @@ class titleJMenuEventListener implements ActionListener, WindowListener {
                 errorUI errorUI = new errorUI("도서를 선택해주십시오.");
             }
             else {
-                rentbookUI rentbook = new rentbookUI(titleUI.tableSelected(row));
+                if(titleUI.tableSelected(row).getrent() == 1) {
+                    errorUI errorUI = new errorUI("이미 대여중인 도서입니다.");
+                }
+                else {
+                    rentbookUI rentbook = new rentbookUI(titleUI.tableSelected(row));
+                }
             }
         }
         else if(actionJMenuItem.getText().equals("도서 반납")) {
