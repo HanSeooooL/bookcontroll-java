@@ -1534,7 +1534,7 @@ class setdateUI extends JFrame implements GUIbones {
                 }
                 else if (startyear.getSelectedItem().equals(startlast.get(1).substring(0, 4))) {
                     startmonth.removeAll();
-                    for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(4, 6)); i++) {
+                    for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(4, 6)) + 1; i++) {
                         startmonth.add(Integer.toString(i));
                     }
                 }
@@ -1550,35 +1550,162 @@ class setdateUI extends JFrame implements GUIbones {
         startmonth.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(startmonth.getSelectedItem()) == Integer.parseInt(startlast.get(0).substring(4, 6))
+                        && startyear.getSelectedItem().equals(startlast.get(0).substring(0, 4))) {
+                    if (Integer.parseInt(startmonth.getSelectedItem()) == 2) {
+                        startday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 30; i++) {
+                            startday.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(startmonth.getSelectedItem()) < 8) && (Integer.parseInt(startmonth.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(startmonth.getSelectedItem()) >= 8) && (Integer.parseInt(startmonth.getSelectedItem()) % 2 == 0))) {
+                        startday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 32; i++) {
+                            startday.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        startday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 31; i++) {
+                            startday.add(Integer.toString(i));
+                        }
+                    }
+                }
+                else if(startyear.getSelectedItem().equals(startlast.get(1).substring(0, 4))
+                        && Integer.parseInt(startmonth.getSelectedItem()) == Integer.parseInt(startlast.get(1).substring(4, 6))) {
+                    startday.removeAll();
+                    for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(6, 8)) + 1; i++) {
+                        startday.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    if (Integer.parseInt(startmonth.getSelectedItem()) == 2) {
+                        startday.removeAll();
+                        for(int i = 1; i < 30; i++) {
+                            startday.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(startmonth.getSelectedItem()) < 8) && (Integer.parseInt(startmonth.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(startmonth.getSelectedItem()) >= 8) && (Integer.parseInt(startmonth.getSelectedItem()) % 2 == 0))) {
+                        startday.removeAll();
+                        for(int i = 1 ; i < 32; i++) {
+                            startday.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        startday.removeAll();
+                        for(int i = 1; i < 31; i++) {
+                            startday.add(Integer.toString(i));
+                        }
+                    }
 
-            }
-        });
-
-        startday.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-
+                }
             }
         });
 
         lastyear.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                if(lastyear.getSelectedItem().equals(startlast.get(0).substring(0, 4))) {
+                    lastmonth.removeAll();
+                    for (int i = Integer.parseInt(startlast.get(0).substring(4, 6)); i < 13; i++) {
+                        lastmonth.add(Integer.toString(i));
+                    }
+                    lastday.removeAll();
+                    if (Integer.parseInt(lastmonth.getSelectedItem()) == 2) {
+                        lastday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 30; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(lastmonth.getSelectedItem()) < 8) && (Integer.parseInt(lastmonth.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(lastmonth.getSelectedItem()) >= 8) && (Integer.parseInt(lastmonth.getSelectedItem()) % 2 == 0))) {
+                        lastday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 32; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        lastday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 31; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                }
+                else if (lastyear.getSelectedItem().equals(startlast.get(1).substring(0, 4))) {
+                    lastmonth.removeAll();
+                    for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(4, 6)) + 1; i++) {
+                        lastmonth.add(Integer.toString(i));
+                    }
 
+                }
+                else {
+                    lastmonth.removeAll();
+                    for(int i = 1; i < 13; i++) {
+                        lastmonth.add(Integer.toString(i));
+                    }
+                    lastday.removeAll();
+                    for(int i = 1; i < 32; i++) {
+                        lastday.add(Integer.toString(i));
+                    }
+                }
             }
         });
 
         lastmonth.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-
-            }
-        });
-
-        lastday.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-
+                if(Integer.parseInt(lastmonth.getSelectedItem()) == Integer.parseInt(startlast.get(0).substring(4, 6))
+                        && lastyear.getSelectedItem().equals(startlast.get(0).substring(0, 4))) {
+                    if (Integer.parseInt(lastmonth.getSelectedItem()) == 2) {
+                        lastday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 30; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(lastmonth.getSelectedItem()) < 8) && (Integer.parseInt(lastmonth.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(lastmonth.getSelectedItem()) >= 8) && (Integer.parseInt(lastmonth.getSelectedItem()) % 2 == 0))) {
+                        lastday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 32; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        lastday.removeAll();
+                        for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 31; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                }
+                else if(lastyear.getSelectedItem().equals(startlast.get(1).substring(0, 4))
+                        && Integer.parseInt(lastmonth.getSelectedItem()) == Integer.parseInt(startlast.get(1).substring(4, 6))) {
+                    lastday.removeAll();
+                    for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(6, 8)) + 1; i++) {
+                        lastday.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    if (Integer.parseInt(lastmonth.getSelectedItem()) == 2) {
+                        lastday.removeAll();
+                        for(int i = 1; i < 30; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(lastmonth.getSelectedItem()) < 8) && (Integer.parseInt(lastmonth.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(lastmonth.getSelectedItem()) >= 8) && (Integer.parseInt(lastmonth.getSelectedItem()) % 2 == 0))) {
+                        lastday.removeAll();
+                        for(int i = 1 ; i < 32; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        lastday.removeAll();
+                        for(int i = 1; i < 31; i++) {
+                            lastday.add(Integer.toString(i));
+                        }
+                    }
+                }
             }
         });
 

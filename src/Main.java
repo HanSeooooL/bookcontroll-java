@@ -15,9 +15,9 @@ public class Main {
 
     public static void main(String[] args) throws IOException, SQLException {
         DB.DB_connect();
-        GUI.program();
+        //GUI.program();
 
-        //setdateUI setdateUI = new setdateUI();
+        setdateUI setdateUI = new setdateUI();
 
         /*int i = 0;
         while(i < 30) {
