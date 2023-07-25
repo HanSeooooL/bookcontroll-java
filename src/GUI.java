@@ -249,7 +249,7 @@ class titleUI extends JFrame implements GUIbones{
         jmenubar.add(rentJMenu);
         jmenubar.add(viewJMenu);
 
-        headings = new String[]{"번호", "도서명", "저자", "출판사", "대여 여부", "대여인", "대여 일자", "반납 일자", "연체일"};
+        headings = new String[]{"번호", "도서명", "저자", "출판사", "대여인", "전화번호", "대여 일자", "반납 일자", "연체일"};
         model = new DefaultTableModel(headings, 0) {
             public boolean isCellEditable(int rowIndex, int mCollndex) {
                 return false;
@@ -479,7 +479,7 @@ class deleteBookUI extends JFrame implements GUIbones{
             rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
         }
         else {
-            rentdata = new rentdata(this.one.getID(), " ", " ", " ");
+            rentdata = new rentdata(this.one.getID(), " ", " ", " ", " ");
         }
         this.createComponents();
         this.setFrame();
@@ -680,7 +680,7 @@ class rentbookUI extends JFrame implements GUIbones{
         phonenumber.add(firstphonenumber);
         phonenumber.add(new JLabel("-"));
         phonenumber.add(middlephonenumber);
-        phonenumber.add(new JLabel("-사"));
+        phonenumber.add(new JLabel("-"));
         phonenumber.add(lastphonenumber);
 
         this.todayorsettingtheday = new JCheckBox("오늘");
@@ -787,11 +787,64 @@ class rentbookUI extends JFrame implements GUIbones{
         for(int i = now.getDayOfMonth(); i < maxday; i++) {
             returnday.add(Integer.toString(i));
         }
+        returnyear.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(returnyear.getSelectedItem()) == now.getYear()) {
+                    returnmonth.removeAll();
+                    for(int i = 1; i < now.getMonthValue() + 1; i++) {
+                        returnmonth.add(Integer.toString(i));
+                    }
+                    returnday.removeAll();
+                    for(int i = 1; i < 32; i++) {
+                        returnday.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    returnmonth.removeAll();
+                    for(int i = 1; i < 13; i++) {
+                        returnmonth.add(Integer.toString(i));
+                    }
+                    returnday.removeAll();
+                    for(int i = 1; i < 32; i++) {
+                        returnday.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
 
         returnmonth.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-
+                if(Integer.parseInt(returnmonth.getSelectedItem()) == now.getMonthValue()
+                        && Integer.parseInt(returnyear.getSelectedItem()) == now.getYear()) {
+                    if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                        returnday.removeAll();
+                        for(int i = now.getDayOfMonth(); i < 30; i++) returnday.add(Integer.toString(i));
+                    }
+                    else if(((Integer.parseInt(returnmonth.getSelectedItem()) < 8) && (Integer.parseInt(returnmonth.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(returnmonth.getSelectedItem()) >= 8) && (Integer.parseInt(returnmonth.getSelectedItem()) % 2 == 0))) {
+                        returnday.removeAll();
+                        for(int i = now.getDayOfMonth(); i < 32; i++) returnday.add(Integer.toString(i));
+                    }
+                    else {
+                        returnday.removeAll();
+                        for(int i = now.getDayOfMonth(); i < 31; i++) returnday.add(Integer.toString(i));
+                    }
+                }
+                else if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                    returnday.removeAll();
+                    for(int i = 1; i < 30; i++) returnday.add(Integer.toString(i));
+                }
+                else if(((Integer.parseInt(returnmonth.getSelectedItem()) < 8) && (Integer.parseInt(returnmonth.getSelectedItem()) % 2 == 1))
+                        || ((Integer.parseInt(returnmonth.getSelectedItem()) >= 8) && (Integer.parseInt(returnmonth.getSelectedItem()) % 2 == 0))) {
+                    returnday.removeAll();
+                    for(int i = 1; i < 32; i++) returnday.add(Integer.toString(i));
+                }
+                else {
+                    returnday.removeAll();
+                    for(int i = 1; i < 31; i++) returnday.add(Integer.toString(i));
+                }
             }
         });
 

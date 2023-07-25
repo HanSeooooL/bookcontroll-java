@@ -224,12 +224,14 @@ class rentdata {
     private String rentperson;
     private String rentday;
     private String willreturnday;
+    private String phonenumber;
 
-    rentdata(String bookID, String rentperson, String rentday, String willreturnday) {
+    rentdata(String bookID, String rentperson, String phonenumber,String rentday, String willreturnday) {
         this.bookID = bookID;
         this.rentperson = rentperson;
         this.rentday = rentday;
         this.willreturnday = willreturnday;
+        this.phonenumber = phonenumber
     }
 
     void print_rentdata() {

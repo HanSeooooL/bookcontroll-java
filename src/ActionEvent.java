@@ -321,8 +321,8 @@ class rentbookUIEventListener implements ActionListener, WindowListener {
         if(actionJbutton.getText().equals("대여")) {
             System.out.println("대여");
             rentdata newdata = new rentdata(rentbookUI.one.getID(), rentbookUI.rentname.getText(),
-                    programinside.getDays.gluecalender(rentbookUI.rentyear.getItem(rentbookUI.rentyear.getSelectedIndex()),
-                            rentbookUI.rentmonth.getItem(rentbookUI.rentmonth.getSelectedIndex()), rentbookUI.rentday.getItem(rentbookUI.rentday.getSelectedIndex())),
+                    programinside.getDays.gluecalender(rentbookUI.year.getItem(rentbookUI.year.getSelectedIndex()),
+                            rentbookUI.month.getItem(rentbookUI.month.getSelectedIndex()), rentbookUI.day.getItem(rentbookUI.day.getSelectedIndex())),
                     programinside.getDays.gluecalender(rentbookUI.returnyear.getItem(rentbookUI.returnyear.getSelectedIndex()),
                             rentbookUI.returnmonth.getItem(rentbookUI.returnmonth.getSelectedIndex()), rentbookUI.returnday.getItem(rentbookUI.returnday.getSelectedIndex())));
             try {
