@@ -5,6 +5,9 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import javax.swing.text.TableView;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -677,7 +680,7 @@ class rentbookUI extends JFrame implements GUIbones{
         phonenumber.add(firstphonenumber);
         phonenumber.add(new JLabel("-"));
         phonenumber.add(middlephonenumber);
-        phonenumber.add(new JLabel("-"));
+        phonenumber.add(new JLabel("-사"));
         phonenumber.add(lastphonenumber);
 
         this.todayorsettingtheday = new JCheckBox("오늘");
@@ -1274,5 +1277,22 @@ class errorUI extends JFrame implements GUIbones{
         this.accept.addActionListener(errorUIEventListener);
         this.addWindowListener(errorUIEventListener);
 
+    }
+}
+
+class JTextFieldLimit extends PlainDocument {
+    private int limit;
+
+    public JTextFieldLimit(int limit) {
+        super();
+        this.limit = limit;
+    }
+    public void insertString(int offset, String str, AttributeSet attr) throws BadLocationException {
+        if(str == null)
+            return;
+
+        if(getLength() + str.length() <= limit) {
+            super.insertString(offset, str, attr);
+        }
     }
 }
