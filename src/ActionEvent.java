@@ -651,10 +651,17 @@ class returnfinishUIEventListener implements ActionListener, WindowListener {
 }
 
 class setdateUIEventListener implements ActionListener, WindowListener {
+    setdateUI setdateUI;
+
+    setdateUIEventListener(setdateUI setdateUI) {
+        this.setdateUI = setdateUI;
+    }
 
     @Override
     public void actionPerformed(java.awt.event.ActionEvent e) {
-
+        JButton ActionJButton = (JButton) e.getSource();
+        if(ActionJButton.getText().equals("확인")) {
+        }
     }
 
     @Override

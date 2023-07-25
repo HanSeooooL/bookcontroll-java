@@ -1048,15 +1048,15 @@ class returnbookUI extends JFrame implements GUIbones{
         for(int i = Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear(); i < 1; i++) {
             year.add(Integer.toString(now.getYear() + i));
         }
-        for(int i = 1; i < now.getMonthValue() + 1; i++ ) {
+        for(int i = Integer.parseInt(rentdata.getRentDay().substring(4, 6)); i < now.getMonthValue() + 1; i++ ) {
             month.add(Integer.toString(i));
         }
-        for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
             day.add(Integer.toString(i));
         }
         year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
-        month.select(now.getMonthValue() - 1);
-        day.select(now.getDayOfMonth() - 1);
+        month.select(now.getMonthValue() - Integer.parseInt(rentdata.getRentDay().substring(4, 6)));
+        day.select(now.getDayOfMonth() - Integer.parseInt(rentdata.getRentDay().substring(6, 8)));
         returndayplace = new JPanel();
         returndayplace.setLayout(new FlowLayout());
         returndayplace.add(todayorsettingtheday);
@@ -1121,8 +1121,16 @@ class returnbookUI extends JFrame implements GUIbones{
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
                     year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
-                    month.select(now.getMonthValue() - 1);
-                    day.select(now.getDayOfMonth() - 1);
+                    month.removeAll();
+                    for(int i = Integer.parseInt(rentdata.getRentDay().substring(4, 6)); i < now.getMonthValue() + 1; i++ ) {
+                        month.add(Integer.toString(i));
+                    }
+                    month.select(now.getMonthValue() - Integer.parseInt(rentdata.getRentDay().substring(4, 6)));
+                    day.removeAll();
+                    for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                    day.select(now.getDayOfMonth() - Integer.parseInt(rentdata.getRentDay().substring(6, 8)));
                     year.setEnabled(false);
                     month.setEnabled(false);
                     day.setEnabled(false);
@@ -1517,6 +1525,25 @@ class setdateUI extends JFrame implements GUIbones {
         startyear.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                if(startyear.getSelectedItem().equals(startlast.get(0).substring(0, 4))) {
+                    startmonth.removeAll();
+                    for (int i = Integer.parseInt(startlast.get(0).substring(4, 6)); i < 13; i++) {
+                        startmonth.add(Integer.toString(i));
+                    }
+
+                }
+                else if (startyear.getSelectedItem().equals(startlast.get(1).substring(0, 4))) {
+                    startmonth.removeAll();
+                    for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(4, 6)); i++) {
+                        startmonth.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    startmonth.removeAll();
+                    for(int i = 1; i < 13; i++) {
+                        startmonth.add(Integer.toString(i));
+                    }
+                }
             }
         });
 
