@@ -591,6 +591,7 @@ class deleteBookUI extends JFrame implements GUIbones{
 
 class rentbookUI extends JFrame implements GUIbones{
     Book one;
+    rentdata rentdata;
     JPanel phonenumber;
     JButton rentfinish, cancel;
     JTextField rentname, middlephonenumber, lastphonenumber;
@@ -601,12 +602,14 @@ class rentbookUI extends JFrame implements GUIbones{
 
     public rentbookUI(Book one) {
         this.one = one;
+        this.rentdata = DBInOut.DBIn.checkrentdata(one.getID());
         this.createComponents();
         this.setFrame();
         this.ConnectEventListener();
     }
 
     public void createComponents() {
+        int minyear;
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
         GridLayout grid = new GridLayout(7, 2);
         grid.setVgap(20);
@@ -685,17 +688,60 @@ class rentbookUI extends JFrame implements GUIbones{
 
         this.todayorsettingtheday = new JCheckBox("오늘");
 
+        minyear = 5;
+
+        if(this.rentdata != null) {
+            minyear = now.getYear() - Integer.parseInt(rentdata.getwillReturnday().substring(0, 4));
+        }
+
         year = new Choice();
         month = new Choice();
         day = new Choice();
-        for(int i = 0; i < 5; i++) {
-            year.add(Integer.toString(2023 - i));
+        month.setSize(10, 10);
+        for(int i = 0; i < minyear + 1; i++) {
+            year.add(Integer.toString(now.getYear() - i));
         }
-        for(int i = 1; i < now.getMonthValue() + 1; i++) {
-            month.add(Integer.toString(i));
+        if(minyear == 0) {
+            month.removeAll();
+            for(int i = Integer.parseInt(this.rentdata.getwillReturnday().substring(4, 6)); i < now.getMonthValue() + 1; i++) {
+                month.add(Integer.toString(i));
+            }
+            if(month.getItemCount() == 1) {
+                day.removeAll();
+                for(int i = Integer.parseInt(this.rentdata.getwillReturnday().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
+                    day.add(Integer.toString(i));
+                }
+            }
+            else {
+                day.removeAll();
+                 if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                    day.removeAll();
+                    for(int i = 1; i < 30; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                        || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                    day.removeAll();
+                    for(int i = 1 ; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    day.removeAll();
+                    for(int i = 1; i < 31; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
         }
-        for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
-            day.add(Integer.toString(i));
+        else {
+            for (int i = 1; i < now.getMonthValue() + 1; i++) {
+                month.add(Integer.toString(i));
+            }
+            for (int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                day.add(Integer.toString(i));
+            }
         }
 
         year.addItemListener(new ItemListener() {
@@ -705,6 +751,31 @@ class rentbookUI extends JFrame implements GUIbones{
                     month.removeAll();
                     for(int i = 1; i < now.getMonthValue() + 1; i++) {
                         month.add(Integer.toString(i));
+                    }
+                }
+                else if (Integer.parseInt(year.getSelectedItem()) == Integer.parseInt(rentdata.getwillReturnday().substring(0, 4))) {
+                    month.removeAll();
+                    for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(4, 6)); i < 13; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                    if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(6, 8)); i < 30; i++) {
+                            day.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(6, 8)) ; i < 32; i++) {
+                            day.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(6, 8)); i < 31; i++) {
+                            day.add(Integer.toString(i));
+                        }
                     }
                 }
                 else {
@@ -727,6 +798,29 @@ class rentbookUI extends JFrame implements GUIbones{
                     day.removeAll();
                     for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
                         day.add(Integer.toString(i));
+                    }
+                }
+                else if (Integer.parseInt(month.getSelectedItem()) == Integer.parseInt(rentdata.getwillReturnday().substring(4, 6))
+                        && Integer.parseInt(year.getSelectedItem()) == Integer.parseInt(rentdata.getwillReturnday().substring(0, 4))) {
+                    day.removeAll();
+                    if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(6, 8)); i < 30; i++) {
+                            day.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(6, 8)) ; i < 32; i++) {
+                            day.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getwillReturnday().substring(6, 8)); i < 31; i++) {
+                            day.add(Integer.toString(i));
+                        }
                     }
                 }
                 else if (Integer.parseInt(month.getSelectedItem()) == 2) {
@@ -755,7 +849,15 @@ class rentbookUI extends JFrame implements GUIbones{
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
                     year.select(0);
+                    month.removeAll();
+                    for(int i = 1; i < now.getMonthValue() + 1; i++) {
+                        month.add(Integer.toString(i));
+                    }
                     month.select(now.getMonthValue() - 1);
+                    day.removeAll();
+                    for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                        day.add(Integer.toString(i));
+                    }
                     day.select(now.getDayOfMonth() - 1);
                     year.setEnabled(false);
                     month.setEnabled(false);
@@ -768,10 +870,11 @@ class rentbookUI extends JFrame implements GUIbones{
                 }
             }
         });
+
         int maxday;
 
         if((now.getMonthValue() < 8 && now.getMonthValue() % 2 == 1) ||
-                (now.getMonthValue() >= 8 && now.getMonthValue() %2 == 0)) maxday = 31;
+                (now.getMonthValue() >= 8 && now.getMonthValue() % 2 == 0)) maxday = 31;
         else if (now.getMonthValue() == 2) maxday = 29;
         else maxday = 30;
 
@@ -784,13 +887,59 @@ class rentbookUI extends JFrame implements GUIbones{
         for(int i = now.getMonthValue(); i < 13; i++) {
             returnmonth.add(Integer.toString(i));
         }
-        for(int i = now.getDayOfMonth(); i < maxday; i++) {
+        for(int i = now.getDayOfMonth(); i < maxday + 1; i++) {
             returnday.add(Integer.toString(i));
         }
+
+        returnyear.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(returnyear.getSelectedItem().equals(Integer.toString(now.getYear()))) {
+                    returnmonth.removeAll();
+                    for(int i = now.getMonthValue(); i < 13; i++) {
+                        returnmonth.add(Integer.toString(i));
+                    }
+                    returnday.removeAll();
+                    for(int i = now.getDayOfMonth(); i < maxday + 1; i++) {
+                        returnday.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    returnmonth.removeAll();
+                    for(int i = 1; i < 13; i++) returnmonth.add(Integer.toString(i));
+                    returnday.removeAll();
+                    for(int i = 1; i < 32; i++) returnday.add(Integer.toString(i));
+                }
+            }
+        });
 
         returnmonth.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
+                if((returnmonth.getSelectedItem().equals(Integer.toString(now.getMonthValue())) &&
+                        (returnyear.getSelectedItem().equals(Integer.toString(now.getYear()))))) {
+                    returnday.removeAll();
+                    for(int i = now.getDayOfMonth(); i < maxday + 1; i++) returnday.add(Integer.toString(i));
+                }
+                else if (Integer.parseInt(returnmonth.getSelectedItem()) == 2) {
+                    returnday.removeAll();
+                    for(int i = 1; i < 30; i++) {
+                        returnday.add(Integer.toString(i));
+                    }
+                }
+                else if(((Integer.parseInt(returnmonth.getSelectedItem()) < 8) && (Integer.parseInt(returnmonth.getSelectedItem()) % 2 == 1))
+                        || ((Integer.parseInt(returnmonth.getSelectedItem()) >= 8) && (Integer.parseInt(returnmonth.getSelectedItem()) % 2 == 0))) {
+                    returnday.removeAll();
+                    for(int i = 1 ; i < 32; i++) {
+                        returnday.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    returnday.removeAll();
+                    for(int i = 1; i < 31; i++) {
+                        returnday.add(Integer.toString(i));
+                    }
+                }
 
             }
         });
@@ -842,7 +991,7 @@ class rentbookUI extends JFrame implements GUIbones{
         setTitle("도서 대여");
         this.setBackground(Color.white);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(650,390));
+        this.setPreferredSize(new Dimension(680,390));
         this.pack();
         setVisible(true);
     }
