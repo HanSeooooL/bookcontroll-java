@@ -6,6 +6,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.text.TableView;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -586,12 +588,13 @@ class deleteBookUI extends JFrame implements GUIbones{
 
 class rentbookUI extends JFrame implements GUIbones{
     Book one;
-
+    JPanel phonenumber;
     JButton rentfinish, cancel;
-    JTextField rentname;
-    Choice rentyear, rentmonth, rentday, returnyear, returnmonth, returnday;
-    JLabel bookname, writer, company, rentnamee, rentdayy, returndayy, booknamee, writerr, companyy;
-
+    JTextField rentname, middlephonenumber, lastphonenumber;
+    Choice year, month, day, returnyear, returnmonth, returnday, firstphonenumber;
+    JLabel bookname, writer, company, rentnamee,
+            rentdayy, returndayy, booknamee, writerr, companyy, phonenumberr;
+    JCheckBox todayorsettingtheday;
 
     public rentbookUI(Book one) {
         this.one = one;
@@ -601,7 +604,8 @@ class rentbookUI extends JFrame implements GUIbones{
     }
 
     public void createComponents() {
-        GridLayout grid = new GridLayout(6, 2);
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        GridLayout grid = new GridLayout(7, 2);
         grid.setVgap(20);
         grid.setHgap(5);
 
@@ -642,35 +646,156 @@ class rentbookUI extends JFrame implements GUIbones{
         rentname = new JTextField("");
         rentname.setHorizontalAlignment(JTextField.CENTER);
 
-        rentyear = new Choice();
-        rentmonth = new Choice();
-        rentday = new Choice();
+        firstphonenumber = new Choice();
+        firstphonenumber.add("010");
+        firstphonenumber.add("02");
+        firstphonenumber.add("031");
+        firstphonenumber.add("032");
+        firstphonenumber.add("033");
+        firstphonenumber.add("041");
+        firstphonenumber.add("042");
+        firstphonenumber.add("043");
+        firstphonenumber.add("044");
+        firstphonenumber.add("051");
+        firstphonenumber.add("052");
+        firstphonenumber.add("053");
+        firstphonenumber.add("054");
+        firstphonenumber.add("055");
+        firstphonenumber.add("061");
+        firstphonenumber.add("062");
+        firstphonenumber.add("063");
+        firstphonenumber.add("064");
+
+        middlephonenumber = new JTextField(4);
+        lastphonenumber = new JTextField(4);
+
+        middlephonenumber.setDocument(new JTextFieldLimit(4));
+        lastphonenumber.setDocument(new JTextFieldLimit(4));
+
+        phonenumber = new JPanel();
+        phonenumber.setLayout(new FlowLayout());
+        phonenumber.add(firstphonenumber);
+        phonenumber.add(new JLabel("-"));
+        phonenumber.add(middlephonenumber);
+        phonenumber.add(new JLabel("-"));
+        phonenumber.add(lastphonenumber);
+
+        this.todayorsettingtheday = new JCheckBox("오늘");
+
+        year = new Choice();
+        month = new Choice();
+        day = new Choice();
         for(int i = 0; i < 5; i++) {
-            rentyear.add(Integer.toString(2023 - i));
+            year.add(Integer.toString(2023 - i));
         }
-        for(int i = 1; i < 13; i++) {
-            rentmonth.add(Integer.toString(i));
+        for(int i = 1; i < now.getMonthValue() + 1; i++) {
+            month.add(Integer.toString(i));
         }
-        for(int i = 1; i < 31; i++) {
-            rentday.add(Integer.toString(i));
+        for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+            day.add(Integer.toString(i));
         }
+
+        year.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(year.getSelectedItem()) == now.getYear()) {
+                    month.removeAll();
+                    for(int i = 1; i < now.getMonthValue() + 1; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    month.removeAll();
+                    for(int i = 1; i < 13; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                    day.removeAll();
+                    for(int i = 1; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
+        month.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(month.getSelectedItem()) == now.getMonthValue()
+                        && Integer.parseInt(year.getSelectedItem()) == now.getYear()) {
+                    day.removeAll();
+                    for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                    day.removeAll();
+                    for(int i = 1; i < 30; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                        || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                    day.removeAll();
+                    for(int i = 1 ; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    day.removeAll();
+                    for(int i = 1; i < 31; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
+        todayorsettingtheday.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED) {
+                    year.select(0);
+                    month.select(now.getMonthValue() - 1);
+                    day.select(now.getDayOfMonth() - 1);
+                    year.setEnabled(false);
+                    month.setEnabled(false);
+                    day.setEnabled(false);
+                }
+                else {
+                    year.setEnabled(true);
+                    month.setEnabled(true);
+                    day.setEnabled(true);
+                }
+            }
+        });
+        int maxday;
+
+        if((now.getMonthValue() < 8 && now.getMonthValue() % 2 == 1) ||
+                (now.getMonthValue() >= 8 && now.getMonthValue() %2 == 0)) maxday = 31;
+        else if (now.getMonthValue() == 2) maxday = 29;
+        else maxday = 30;
 
         returnyear = new Choice();
         returnmonth = new Choice();
         returnday = new Choice();
         for(int i = 0; i < 5; i++) {
-            returnyear.add(Integer.toString(2023 + i));
+            returnyear.add(Integer.toString(now.getYear() + i));
         }
-        for(int i = 1; i < 13; i++) {
+        for(int i = now.getMonthValue(); i < 13; i++) {
             returnmonth.add(Integer.toString(i));
         }
-        for(int i = 1; i < 31; i++) {
+        for(int i = now.getDayOfMonth(); i < maxday; i++) {
             returnday.add(Integer.toString(i));
         }
 
-        choicerentday.add(rentyear);
-        choicerentday.add(rentmonth);
-        choicerentday.add(rentday);
+        returnmonth.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+            }
+        });
+
+        choicerentday.add(todayorsettingtheday);
+        choicerentday.add(year);
+        choicerentday.add(month);
+        choicerentday.add(day);
 
         choicewillreturnday.add(returnyear);
         choicewillreturnday.add(returnmonth);
@@ -679,13 +804,17 @@ class rentbookUI extends JFrame implements GUIbones{
         rentnamee = new JLabel("대여인");
         rentdayy = new JLabel("대여일");
         returndayy = new JLabel("반납예정일");
+        phonenumberr = new JLabel("전화번호");
 
         rentnamee.setHorizontalAlignment(JLabel.CENTER);
         rentdayy.setHorizontalAlignment(JLabel.CENTER);
         returndayy.setHorizontalAlignment(JLabel.CENTER);
+        phonenumberr.setHorizontalAlignment(JLabel.CENTER);
 
         insertlines.add(rentnamee);
         insertlines.add(rentname);
+        insertlines.add(phonenumberr);
+        insertlines.add(phonenumber);
         insertlines.add(rentdayy);
         insertlines.add(choicerentday);
         insertlines.add(returndayy);
@@ -710,7 +839,7 @@ class rentbookUI extends JFrame implements GUIbones{
         setTitle("도서 대여");
         this.setBackground(Color.white);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setPreferredSize(new Dimension(500,350));
+        this.setPreferredSize(new Dimension(650,390));
         this.pack();
         setVisible(true);
     }
