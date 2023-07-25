@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -523,6 +524,9 @@ class viewhistorySearchEventListener implements  ActionListener {
         else if(actionJButton.getText().equals("나가기")) {
             this.viewhistoryUI.dispose();
         }
+        else if(actionJButton.getText().equals("기간 설정")) {
+
+        }
     }
 }
 
@@ -607,6 +611,49 @@ class returnfinishUIEventListener implements ActionListener, WindowListener {
         if(actionJButton.getText().equals("확인")) {
             this.returnfinish.dispose();
         }
+
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
+    }
+}
+
+class setdateUIEventListener implements ActionListener, WindowListener {
+
+    @Override
+    public void actionPerformed(java.awt.event.ActionEvent e) {
 
     }
 

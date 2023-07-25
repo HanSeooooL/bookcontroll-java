@@ -1233,7 +1233,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
     static JTable table;
     JLabel Search;
     Choice Searchsection;
-    JButton Searchstart, exit;
+    JButton Searchstart, exit, setdateview;
     JTextField SearchKeyword;
     String[] headings;
     JScrollPane jScrollPane;
@@ -1378,6 +1378,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
         Searchsection.setLocation(10, 400);
 
         Searchstart = new JButton("검색");
+        setdateview = new JButton("기간 설정");
         exit = new JButton("나가기");
 
         SearchKeyword = new JTextField("");
@@ -1389,6 +1390,7 @@ class viewhistoryUI extends JFrame implements GUIbones{
         SearchPanel.add(Searchsection);
         SearchPanel.add(SearchKeyword);
         SearchPanel.add(Searchstart);
+        SearchPanel.add(setdateview);
         SearchPanel.add(exit);
 
         jScrollPane = new JScrollPane(table);
@@ -1414,6 +1416,169 @@ class viewhistoryUI extends JFrame implements GUIbones{
         Searchstart.addActionListener(viewhistorySearchEventListener);
         exit.addActionListener(viewhistorySearchEventListener);
 
+    }
+}
+
+class setdateUI extends JFrame implements GUIbones {
+    JPanel buttonspace, insertspace;
+    JButton accept, cancel;
+    Choice startyear, startmonth, startday, lastyear, lastmonth, lastday;
+
+    setdateUI() {
+        this.createComponents();
+        this.setFrame();
+        this.ConnectEventListener();
+    }
+
+    @Override
+    public void createComponents() {
+        ArrayList<String> startlast;
+
+        startlast = DBInOut.DBIn.firstandlastrentdata();
+
+        this.insertspace = new JPanel();
+        this.startyear = new Choice();
+        this.startmonth = new Choice();
+        this.startday = new Choice();
+        this.lastyear = new Choice();
+        this.lastmonth = new Choice();
+        this.lastday = new Choice();
+
+        insertspace.add(startyear);
+        insertspace.add(startmonth);
+        insertspace.add(startday);
+        insertspace.add(lastyear);
+        insertspace.add(lastmonth);
+        insertspace.add(lastday);
+
+        for(int i = Integer.parseInt(startlast.get(0).substring(0, 4));
+            i < Integer.parseInt(startlast.get(1).substring(0, 4)) + 1; i++) {
+            this.startyear.add(Integer.toString(i));
+        }
+        for(int i = Integer.parseInt(startlast.get(1).substring(0, 4));
+            i > Integer.parseInt(startlast.get(0).substring(0, 4)) - 1; i--) {
+            this.lastyear.add(Integer.toString(i));
+        }
+        if(startlast.get(0).substring(0, 4).equals(startlast.get(1).substring(0, 4))) {
+            for(int i = Integer.parseInt(startlast.get(0).substring(4, 6)); i < Integer.parseInt(startlast.get(1).substring(4, 6)) + 1; i++) {
+                this.startmonth.add(Integer.toString(i));
+            }
+            for(int i = Integer.parseInt(startlast.get(1).substring(4, 6)); i > Integer.parseInt(startlast.get(0).substring(4, 6)) - 1; i--) {
+                this.lastmonth.add(Integer.toString(i));
+            }
+        }
+        else {
+            for (int i = Integer.parseInt(startlast.get(0).substring(4, 6)); i < 13; i++) {
+                this.startmonth.add(Integer.toString(i));
+            }
+            for (int i = 1; i < Integer.parseInt(startlast.get(1).substring(4, 6)) + 1; i++) {
+                this.lastmonth.add(Integer.toString(i));
+            }
+            this.lastmonth.select(Integer.parseInt(startlast.get(1).substring(4, 6)) - 1);
+        }
+
+        if(startlast.get(0).substring(0, 4).equals(startlast.get(1).substring(0, 4))
+                && startlast.get(0).substring(4, 6).equals(startlast.get(1).substring(4, 6))) {
+            for(int i = Integer.parseInt(startlast.get(0).substring(6, 8));
+                i < Integer.parseInt(startlast.get(1).substring(6, 8)) + 1; i++) {
+                this.startday.add(Integer.toString(i));
+                this.lastday.add(Integer.toString(i));
+            }
+            this.lastday.select(Integer.parseInt(startlast.get(1).substring(6, 8)) -
+                    Integer.parseInt(startlast.get(0).substring(6, 8)));
+        }
+        else {
+            //startday
+            if (Integer.parseInt(this.startmonth.getSelectedItem()) == 2) {
+                this.startday.removeAll();
+                for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 30; i++) {
+                    this.startday.add(Integer.toString(i));
+                }
+            }
+            else if(((Integer.parseInt(this.startmonth.getSelectedItem()) < 8) && (Integer.parseInt(this.startmonth.getSelectedItem()) % 2 == 1))
+                    || ((Integer.parseInt(this.startmonth.getSelectedItem()) >= 8) && (Integer.parseInt(this.startmonth.getSelectedItem()) % 2 == 0))) {
+                this.startday.removeAll();
+                for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 32; i++) {
+                    this.startday.add(Integer.toString(i));
+                }
+            }
+            else {
+                this.startday.removeAll();
+                for(int i = Integer.parseInt(startlast.get(0).substring(6, 8)); i < 31; i++) {
+                    this.startday.add(Integer.toString(i));
+                }
+            }
+            //returnday
+            for(int i = 1; i < Integer.parseInt(startlast.get(1).substring(6, 8)) + 1; i++) {
+                this.lastday.add(Integer.toString(i));
+            }
+        }
+
+        startyear.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+            }
+        });
+
+        startmonth.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+            }
+        });
+
+        startday.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+            }
+        });
+
+        lastyear.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+            }
+        });
+
+        lastmonth.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+            }
+        });
+
+        lastday.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+
+            }
+        });
+
+        this.accept = new JButton("확인");
+        this.cancel = new JButton("취소");
+
+        this.buttonspace = new JPanel();
+        this.buttonspace.add(this.accept);
+        this.buttonspace.add(this.cancel);
+
+        Container c = getContentPane();
+        GridLayout grid = new GridLayout(2, 1);
+        c.setLayout(grid);
+        c.add(insertspace);
+    }
+
+    @Override
+    public void setFrame() {
+        this.setTitle("기간 설정");
+        this.setBackground(Color.white);
+        this.setPreferredSize(new Dimension(400, 150));
+        this.pack();
+        this.setVisible(true);
+    }
+
+    @Override
+    public void ConnectEventListener() {
     }
 }
 

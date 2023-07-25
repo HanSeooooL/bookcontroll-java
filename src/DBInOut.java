@@ -159,6 +159,28 @@ class DBIn{
 
         return res;
     }
+
+    ArrayList<String> firstandlastrentdata() {
+        ArrayList<String> res = null;
+        res = new ArrayList<>();
+        try {
+            DB.ps = DB.con.prepareStatement("select min(cast(rentday as unsigned)) as result from bookcontroll.rentdata;");
+            DB.rs = DB.ps.executeQuery();
+            while(DB.rs.next()) {
+                res.add(Integer.toString(DB.rs.getInt("result")));
+                System.out.println(res.get(0));
+            }
+            DB.ps = DB.con.prepareStatement("select max(cast(rentday as unsigned)) as result from bookcontroll.rentdata;");
+            DB.rs = DB.ps.executeQuery();
+            while(DB.rs.next()) {
+                res.add(Integer.toString(DB.rs.getInt("result")));
+                System.out.println(res.get(1));
+            }
+        } catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return res;
+    }
 }
 
 
