@@ -1051,8 +1051,16 @@ class returnbookUI extends JFrame implements GUIbones{
         for(int i = Integer.parseInt(rentdata.getRentDay().substring(4, 6)); i < now.getMonthValue() + 1; i++ ) {
             month.add(Integer.toString(i));
         }
-        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
-            day.add(Integer.toString(i));
+        if(Integer.parseInt(rentdata.getRentDay().substring(4, 6)) == now.getMonthValue()
+                && Integer.parseInt(rentdata.getRentDay().substring(0, 4)) == now.getMonthValue()) {
+            for (int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
+                day.add(Integer.toString(i));
+            }
+        }
+        else {
+            for (int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                day.add(Integer.toString(i));
+            }
         }
         year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
         month.select(now.getMonthValue() - Integer.parseInt(rentdata.getRentDay().substring(4, 6)));
