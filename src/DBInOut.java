@@ -53,7 +53,7 @@ class DBOut {
     void renttheBook(rentdata a) {
         try {
             DB.ps = DB.con.prepareStatement("insert into bookcontroll.rentdata" +
-                    "(book_initialcode, rentperson, phonenumber, rentday, returnday) value(?, ?, ?, ?, ?);");
+                    "(book_initialcode, phonenumber, rentday, returnday) value(?, ?, ?, ?, ?);");
             DB.ps.setString(1, a.getbookID());
             DB.ps.setString(2, a.getRentPerson());
             DB.ps.setString(3, a.getphonenumber());
@@ -79,6 +79,19 @@ class DBOut {
             DB.ps = DB.con.prepareStatement("update bookcontroll.Book set rented = 0 where book_initialcode = ?");
             DB.ps.setString(1, code);
             DB.ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void addpersondata(personaldata personaldata) {
+        try {
+            DB.ps = DB.con.prepareStatement("insert into bookcontroll.personaldata(phonenumber, name, address) values(?, ?, ?)");
+            DB.ps.setString(1, personaldata.getPhonenumber());
+            DB.ps.setString(2, personaldata.getName());
+            DB.ps.setString(3, personaldata.getAddress());
+            DB.ps.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

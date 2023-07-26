@@ -1,18 +1,19 @@
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-
+import java.util.ArrayList;
 
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, FileNotFoundException {
         DB.DB_connect();
-        GUI.program();
+        //GUI.program();
 
         /*int i = 0;
         while(i < 30) {
@@ -254,4 +255,20 @@ class rentdata {
     }
     void deletemark() {this.bookID = "0";}
 
+}
+
+class personaldata {
+    private String phonenumber;
+    private String name;
+    private String address;
+
+    personaldata(String phonenumber, String name, String address) {
+        this.phonenumber = phonenumber;
+        this.name = name;
+        this.address = address;
+    }
+
+    String getPhonenumber() { return this.phonenumber; }
+    String getName() { return this.name; }
+    String getAddress() { return this.address; }
 }

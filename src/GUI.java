@@ -337,7 +337,7 @@ class addbookUI extends JFrame implements GUIbones{
     }
 
     public void createComponents() {
-        GridLayout grid = new GridLayout(4, 2);
+        GridLayout grid = new GridLayout(3, 2);
         grid.setVgap(5);
 
         JPanel insertlines = new JPanel();
@@ -347,7 +347,6 @@ class addbookUI extends JFrame implements GUIbones{
         bookname = new JTextField("");
         writer = new JTextField("");
         company = new JTextField("");
-        genre = new Choice();
 
         insertlines.add(new JLabel("        도서명"));
         insertlines.add(bookname);
@@ -355,21 +354,9 @@ class addbookUI extends JFrame implements GUIbones{
         insertlines.add(writer);
         insertlines.add(new JLabel("        출판사"));
         insertlines.add(company);
-        insertlines.add(new JLabel("        장르"));
-        insertlines.add(genre);
         insertlines.setLayout(grid);
         insertlines.setSize(500, 100);
 
-        genre.add("총류");
-        genre.add("철학");
-        genre.add("종교");
-        genre.add("사회과학");
-        genre.add("자연과학");
-        genre.add("기술과학");
-        genre.add("예술");
-        genre.add("언어");
-        genre.add("문학");
-        genre.add("역사");
 
         choices.add(addfinish);
         choices.add(cancel);
@@ -1455,20 +1442,29 @@ class setdateUI extends JFrame implements GUIbones {
 
         startlast = DBInOut.DBIn.firstandlastrentdata();
 
+        GridLayout grid = new GridLayout(2, 1);
         this.insertspace = new JPanel();
+        JPanel start = new JPanel();
+        JPanel finish = new JPanel();
         this.startyear = new Choice();
         this.startmonth = new Choice();
         this.startday = new Choice();
         this.lastyear = new Choice();
         this.lastmonth = new Choice();
         this.lastday = new Choice();
+        this.insertspace.setLayout(grid);
 
-        insertspace.add(startyear);
-        insertspace.add(startmonth);
-        insertspace.add(startday);
-        insertspace.add(lastyear);
-        insertspace.add(lastmonth);
-        insertspace.add(lastday);
+        start.add(new JLabel("처음"));
+        finish.add(new JLabel("끝"));
+        start.add(this.startyear);
+        start.add(this.startmonth);
+        start.add(this.startday);
+        finish.add(this.lastyear);
+        finish.add(this.lastmonth);
+        finish.add(this.lastday);
+
+        insertspace.add(start);
+        insertspace.add(finish);
 
         for(int i = Integer.parseInt(startlast.get(0).substring(0, 4));
             i < Integer.parseInt(startlast.get(1).substring(0, 4)) + 1; i++) {
@@ -1729,10 +1725,9 @@ class setdateUI extends JFrame implements GUIbones {
         this.buttonspace.add(this.cancel);
 
         Container c = getContentPane();
-        GridLayout grid = new GridLayout(2, 1);
-        c.setLayout(grid);
-        c.add(insertspace);
-        c.add(buttonspace);
+        c.setLayout(new BorderLayout());
+        c.add(insertspace, BorderLayout.CENTER);
+        c.add(buttonspace, BorderLayout.SOUTH);
     }
 
     @Override
