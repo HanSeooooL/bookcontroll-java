@@ -912,10 +912,12 @@ class returnbookUI extends JFrame implements GUIbones{
 
     Book one;
     rentdata rentdata;
-    JPanel displayrentinfo, buttonplace, centerplace;
+    JPanel displayrentinfo, buttonplace, centerplace, returndayplace;
     JLabel booknamee, writerr, companyy, rentpersonn, rentdayy, willreturndayy, todayy;
-    JLabel bookname, writer, company, rentperson, rentday, willreturnday, today;
+    JLabel bookname, writer, company, rentperson, rentday, willreturnday;
     JButton returnfinish, cancel;
+    JCheckBox todayorsettingtheday;
+    Choice year, month, day;
     public returnbookUI(Book a) throws IOException {
         this.one = a;
         rentdata = FileInOut.File.fileRead.checkthebookrent(one.getID());
@@ -940,7 +942,6 @@ class returnbookUI extends JFrame implements GUIbones{
         this.rentperson = new JLabel(this.rentdata.getRentPerson());
         this.rentday = new JLabel(this.rentdata.getRentDay());
         this.willreturnday = new JLabel(this.rentdata.getwillReturnday());
-        this.today = new JLabel(programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
 
 
         this.todayorsettingtheday = new JCheckBox("오늘");
@@ -1054,7 +1055,7 @@ class returnbookUI extends JFrame implements GUIbones{
         this.rentpersonn = new JLabel("대여인");
         this.rentdayy = new JLabel("대여일");
         this.willreturndayy = new JLabel("반납 예정일");
-        this.todayy = new JLabel("오늘 날짜");
+        this.todayy = new JLabel("반납일");
 
         this.booknamee.setHorizontalAlignment(JLabel.CENTER);
         this.writerr.setHorizontalAlignment(JLabel.CENTER);
@@ -1083,7 +1084,7 @@ class returnbookUI extends JFrame implements GUIbones{
         this.displayrentinfo.add(this.willreturndayy);
         this.displayrentinfo.add(this.willreturnday);
         this.displayrentinfo.add(this.todayy);
-        this.displayrentinfo.add(this.today);
+        this.displayrentinfo.add(this.returndayplace);
 
         bookname.setOpaque(true);
         bookname.setBackground(Color.WHITE);
@@ -1103,9 +1104,6 @@ class returnbookUI extends JFrame implements GUIbones{
         willreturnday.setOpaque(true);
         willreturnday.setBackground(Color.WHITE);
         willreturnday.setBorder(border);
-        today.setOpaque(true);
-        today.setBackground(Color.WHITE);
-        today.setBorder(border);
 
         this.buttonplace = new JPanel();
         this.buttonplace.add(returnfinish);
