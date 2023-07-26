@@ -955,8 +955,16 @@ class returnbookUI extends JFrame implements GUIbones{
         for(int i = Integer.parseInt(rentdata.getRentDay().substring(4, 6)); i < now.getMonthValue() + 1; i++ ) {
             month.add(Integer.toString(i));
         }
-        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
-            day.add(Integer.toString(i));
+        if(Integer.parseInt(rentdata.getRentDay().substring(4, 6)) == now.getMonthValue()
+                && Integer.parseInt(rentdata.getRentDay().substring(0, 4)) == now.getMonthValue()) {
+            for (int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
+                day.add(Integer.toString(i));
+            }
+        }
+        else {
+            for (int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                day.add(Integer.toString(i));
+            }
         }
         year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
         month.select(now.getMonthValue() - Integer.parseInt(rentdata.getRentDay().substring(4, 6)));
@@ -997,6 +1005,27 @@ class returnbookUI extends JFrame implements GUIbones{
                     day.removeAll();
                     for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
                         day.add(Integer.toString(i));
+                    }
+                }
+                else if(Integer.parseInt(month.getSelectedItem()) == Integer.parseInt(rentdata.getRentDay().substring(4, 6))) {
+                    if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < 30; i++) {
+                            day.add(Integer.toString(i));
+                        }
+                    }
+                    else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                            || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < 32; i++) {
+                            day.add(Integer.toString(i));
+                        }
+                    }
+                    else {
+                        day.removeAll();
+                        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < 31; i++) {
+                            day.add(Integer.toString(i));
+                        }
                     }
                 }
                 else if (Integer.parseInt(month.getSelectedItem()) == 2) {
