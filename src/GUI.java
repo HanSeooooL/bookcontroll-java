@@ -943,6 +943,109 @@ class returnbookUI extends JFrame implements GUIbones{
         this.today = new JLabel(programinside.getDays.gluecalender(Integer.toString(now.getYear()), Integer.toString(now.getMonthValue()), Integer.toString(now.getDayOfMonth())));
 
 
+        this.todayorsettingtheday = new JCheckBox("오늘");
+        year = new Choice();
+        month = new Choice();
+        day = new Choice();
+
+        for(int i = Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear(); i < 1; i++) {
+            year.add(Integer.toString(now.getYear() + i));
+        }
+        for(int i = Integer.parseInt(rentdata.getRentDay().substring(4, 6)); i < now.getMonthValue() + 1; i++ ) {
+            month.add(Integer.toString(i));
+        }
+        for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
+            day.add(Integer.toString(i));
+        }
+        year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
+        month.select(now.getMonthValue() - Integer.parseInt(rentdata.getRentDay().substring(4, 6)));
+        day.select(now.getDayOfMonth() - Integer.parseInt(rentdata.getRentDay().substring(6, 8)));
+        returndayplace = new JPanel();
+        returndayplace.setLayout(new FlowLayout());
+        returndayplace.add(todayorsettingtheday);
+        returndayplace.add(year);
+        returndayplace.add(month);
+        returndayplace.add(day);
+
+        year.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(year.getSelectedItem()) == now.getYear()) {
+                    month.removeAll();
+                    for(int i = 1; i < now.getMonthValue() + 1; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    month.removeAll();
+                    for(int i = 1; i < 13; i++) {
+                        month.add(Integer.toString(i));
+                    }
+                    day.removeAll();
+                    for(int i = 1; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
+        month.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(Integer.parseInt(month.getSelectedItem()) == now.getMonthValue()
+                        && Integer.parseInt(year.getSelectedItem()) == now.getYear()) {
+                    day.removeAll();
+                    for(int i = 1; i < now.getDayOfMonth() + 1; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if (Integer.parseInt(month.getSelectedItem()) == 2) {
+                    day.removeAll();
+                    for(int i = 1; i < 30; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else if(((Integer.parseInt(month.getSelectedItem()) < 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 1))
+                        || ((Integer.parseInt(month.getSelectedItem()) >= 8) && (Integer.parseInt(month.getSelectedItem()) % 2 == 0))) {
+                    day.removeAll();
+                    for(int i = 1 ; i < 32; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+                else {
+                    day.removeAll();
+                    for(int i = 1; i < 31; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                }
+            }
+        });
+        todayorsettingtheday.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange() == ItemEvent.SELECTED) {
+                    year.select(Math.abs(Integer.parseInt(rentdata.getRentDay().substring(0, 4)) - now.getYear()));
+                    month.removeAll();
+                    for(int i = Integer.parseInt(rentdata.getRentDay().substring(4, 6)); i < now.getMonthValue() + 1; i++ ) {
+                        month.add(Integer.toString(i));
+                    }
+                    month.select(now.getMonthValue() - Integer.parseInt(rentdata.getRentDay().substring(4, 6)));
+                    day.removeAll();
+                    for(int i = Integer.parseInt(rentdata.getRentDay().substring(6, 8)); i < now.getDayOfMonth() + 1; i++) {
+                        day.add(Integer.toString(i));
+                    }
+                    day.select(now.getDayOfMonth() - Integer.parseInt(rentdata.getRentDay().substring(6, 8)));
+                    year.setEnabled(false);
+                    month.setEnabled(false);
+                    day.setEnabled(false);
+                }
+                else {
+                    year.setEnabled(true);
+                    month.setEnabled(true);
+                    day.setEnabled(true);
+                }
+            }
+        });
+
         this.bookname.setPreferredSize(new Dimension(450, 20));
 
         this.booknamee = new JLabel("도서명");
